@@ -1,0 +1,2629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Pan-India Home Studio – Audit Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init("xikmHGGr6F2IIDVCw");</script>
+<style>
+:root{
+  --bg:#080d1a;--bg2:#0d1526;--bg3:#131e35;--bg4:#1a2a47;
+  --border:rgba(148,163,184,0.08);--border2:rgba(148,163,184,0.15);
+  --accent:#4f6ef7;--accent2:#7b93ff;--accent-glow:rgba(79,110,247,0.12);
+  --green:#10b981;--blue:#3b82f6;--gold:#f59e0b;--red:#ef4444;
+  --purple:#8b5cf6;--cyan:#06b6d4;--orange:#f97316;--pink:#ec4899;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden;font-size:12px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
+
+/* HEADER */
+.header{background:rgba(8,13,26,0.97);border-bottom:1px solid var(--border2);padding:0 16px;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(24px);}
+.logo{display:flex;align-items:center;gap:8px;}
+.logo-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4f6ef7,#7b93ff);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;}
+.logo-text b{font-size:12px;font-weight:800;color:#fff;display:block;}
+.logo-text span{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.header-center{display:flex;gap:2px;}
+.tab-btn{padding:4px 10px;border-radius:6px;border:none;background:transparent;color:var(--muted2);font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;}
+.tab-btn:hover{color:var(--text);background:var(--bg3);}
+.tab-btn.active{color:#fff;background:var(--accent);}
+.header-right{display:flex;align-items:center;gap:8px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hdr-badge{display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:var(--green);font-size:10px;font-weight:700;}
+.date-txt{color:var(--muted);font-family:var(--mono);font-size:10px;}
+.btn-sm{padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-accent{background:var(--accent);border-color:var(--accent);color:#fff!important;}
+.btn-green{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3);color:var(--green)!important;}
+
+/* LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 48px);}
+.sidebar{width:170px;background:var(--bg2);border-right:1px solid var(--border);padding:10px 0;flex-shrink:0;position:sticky;top:48px;height:calc(100vh - 48px);overflow-y:auto;}
+.sb-section{padding:5px 12px;font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:10px;margin-bottom:3px;}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 12px;color:var(--muted2);font-size:11px;font-weight:500;cursor:pointer;border-left:2px solid transparent;transition:all .15s;}
+.sb-item:hover{color:var(--text);background:rgba(255,255,255,0.02);}
+.sb-item.active{color:var(--accent2);background:var(--accent-glow);border-left-color:var(--accent);}
+.sb-item .ic{width:14px;text-align:center;font-size:12px;}
+.sb-badge{margin-left:auto;padding:1px 6px;border-radius:10px;background:var(--accent-glow);color:var(--accent2);font-size:9px;font-weight:700;}
+.main{flex:1;padding:14px;overflow-x:hidden;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* PAGE HEADER */
+.phb{background:linear-gradient(135deg,rgba(79,110,247,0.08),rgba(6,182,212,0.04));border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.phb-title{font-size:16px;font-weight:800;color:#fff;letter-spacing:-0.3px;}
+.phb-title span{background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.phb-sub{font-size:10px;color:var(--muted2);margin-top:2px;}
+
+/* SEC HEADER */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.sec-title{font-size:16px;font-weight:800;color:#fff;}
+.sec-title span{background:linear-gradient(135deg,var(--accent2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sec-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px;}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:13px 13px;position:relative;overflow:hidden;transition:all .2s;cursor:default;}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.kpi-label{font-size:11.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi-val{font-family:var(--mono);font-size:34px;font-weight:600;line-height:1;margin-bottom:4px;}
+.kpi-sub{font-size:12px;color:var(--muted);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi-bar{height:2px;border-radius:2px;background:rgba(255,255,255,0.05);}
+.kpi-fill{height:100%;border-radius:2px;transition:width 1.5s ease;}
+.kpi-glow{position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:.07;transform:translate(15px,-15px);}
+.kpi.c-blue{border-color:rgba(59,130,246,.2);}.kpi.c-blue .kpi-val{color:var(--blue);}.kpi.c-blue .kpi-glow{background:var(--blue);}.kpi.c-blue .kpi-fill{background:var(--blue);}
+.kpi.c-green{border-color:rgba(16,185,129,.2);}.kpi.c-green .kpi-val{color:var(--green);}.kpi.c-green .kpi-glow{background:var(--green);}.kpi.c-green .kpi-fill{background:var(--green);}
+.kpi.c-gold{border-color:rgba(245,158,11,.2);}.kpi.c-gold .kpi-val{color:var(--gold);}.kpi.c-gold .kpi-glow{background:var(--gold);}.kpi.c-gold .kpi-fill{background:var(--gold);}
+.kpi.c-red{border-color:rgba(239,68,68,.2);}.kpi.c-red .kpi-val{color:var(--red);}.kpi.c-red .kpi-glow{background:var(--red);}.kpi.c-red .kpi-fill{background:var(--red);}
+.kpi.c-purple{border-color:rgba(139,92,246,.2);}.kpi.c-purple .kpi-val{color:var(--purple);}.kpi.c-purple .kpi-glow{background:var(--purple);}.kpi.c-purple .kpi-fill{background:var(--purple);}
+.kpi.c-cyan{border-color:rgba(6,182,212,.2);}.kpi.c-cyan .kpi-val{color:var(--cyan);}.kpi.c-cyan .kpi-glow{background:var(--cyan);}.kpi.c-cyan .kpi-fill{background:var(--cyan);}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.card-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px;}
+.card-title{font-size:11px;font-weight:700;color:#fff;}
+.card-sub{font-size:9.5px;color:var(--muted);margin-top:2px;}
+.toggle-group{display:flex;gap:2px;flex-shrink:0;}
+.tog{padding:3px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted2);font-family:var(--font);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;}
+.tog.active{background:var(--accent-glow);color:var(--accent2);border-color:var(--accent);}
+
+/* CHARTS */
+.chart-box{position:relative;height:170px;}
+.chart-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important;}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.chart-grid-3{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+
+/* DONUT LEGEND */
+.donut-legend{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+.dl-item{display:flex;align-items:center;gap:6px;}
+.dl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dl-label{font-size:10px;color:var(--muted2);flex:1;}
+.dl-val{font-family:var(--mono);font-size:11px;font-weight:600;}
+.dl-pct{font-size:9px;color:var(--muted);margin-left:2px;}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--bg3);color:var(--muted2);font-weight:700;font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.025);transition:background .1s;}
+tbody tr:hover{background:rgba(79,110,247,0.04);}
+tbody td{padding:7px 10px;font-size:11px;vertical-align:middle;}
+
+/* PILL */
+.pill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap;}
+.pill-green{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25);}
+.pill-gold{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.25);}
+.pill-red{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+.pill-blue{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid rgba(59,130,246,.25);}
+.pill-purple{background:rgba(139,92,246,.12);color:var(--purple);border:1px solid rgba(139,92,246,.25);}
+.pill-cyan{background:rgba(6,182,212,.12);color:var(--cyan);border:1px solid rgba(6,182,212,.25);}
+.pill-orange{background:rgba(249,115,22,.12);color:var(--orange);border:1px solid rgba(249,115,22,.25);}
+.pill-muted{background:rgba(100,116,139,.1);color:var(--muted2);border:1px solid rgba(100,116,139,.2);}
+
+/* LEADER SUMMARY TABLE */
+.ldr-tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.ldr-tbl th{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:8px 12px;text-align:center;border:1px solid var(--border);white-space:nowrap;vertical-align:middle;}
+.ldr-tbl th:first-child{text-align:left;}
+.ldr-tbl td{padding:9px 12px;border:1px solid var(--border);text-align:center;vertical-align:middle;font-family:var(--mono);font-size:13px;}
+.ldr-tbl td:first-child{text-align:left;font-family:var(--font);}
+.ldr-tbl tbody tr:hover td{background:rgba(79,110,247,0.04);}
+.ldr-tbl .tot-row td{background:var(--bg3);font-weight:800;}
+
+/* WK COMPARE */
+.wk-compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.wk-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.wk-card-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg3);}
+.wk-card-title{font-size:11px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px;}
+.wk-tag{padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;}
+.wk-tag.curr{background:rgba(79,110,247,0.2);color:var(--accent2);}
+.wk-tag.prev{background:rgba(100,116,139,0.12);color:var(--muted2);}
+.wk-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.025);}
+.wk-row:last-child{border:none;}
+.wk-label{font-size:11px;color:var(--muted2);}
+.wk-right{display:flex;align-items:center;gap:8px;}
+.wk-val{font-family:var(--mono);font-size:18px;font-weight:600;color:#fff;}
+.wk-diff{font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;}
+.diff-up{background:rgba(16,185,129,.15);color:var(--green);}
+.diff-dn{background:rgba(239,68,68,.15);color:var(--red);}
+.diff-neu{background:rgba(100,116,139,.1);color:var(--muted2);}
+
+/* WEEK TABLE */
+.wat{width:100%;border-collapse:collapse;}
+.wat th{background:var(--bg4);color:var(--muted2);font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:7px 10px;text-align:center;border:1px solid var(--border);}
+.wat th:first-child{text-align:left;}
+.wat td{padding:8px 10px;border:1px solid var(--border);text-align:center;font-family:var(--mono);font-size:11px;}
+.wat td:first-child{text-align:left;font-family:var(--font);}
+.wat .curr-row td{background:rgba(79,110,247,0.06);}
+
+/* FILTER */
+.filter-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;}
+.filter-bar label{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+select,input[type=text],input[type=date]{padding:4px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--font);font-size:11px;outline:none;}
+.filter-sep{width:1px;height:16px;background:var(--border2);}
+
+/* CITY */
+.city-tbl td,.city-tbl th{padding:8px 12px;}
+.city-prog{display:flex;align-items:center;gap:6px;}
+.city-prog-bar{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,0.05);min-width:60px;}
+.city-prog-fill{height:100%;border-radius:5px;background:var(--green);}
+
+/* STUDIO BREAKUP CHART */
+.sb-chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;}
+.sb-chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.sb-chart-title{font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:1px;}
+.sb-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sb-legend{display:flex;align-items:center;gap:10px;}
+.sb-leg-item{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--muted2);}
+.sb-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.sb-loc-count{font-size:9px;color:var(--muted);font-family:var(--mono);}
+.sb-row-wrap{max-height:380px;overflow-y:auto;padding-right:4px;}
+.sb-city-row{margin-bottom:9px;}
+.sb-city-name{font-size:10px;font-weight:700;color:#fff;margin-bottom:4px;}
+.sb-bar-track{display:flex;gap:3px;align-items:center;}
+.sb-bar-pw{height:7px;border-radius:3px;background:#8b5cf6;transition:width .6s ease;min-width:2px;}
+.sb-bar-edu{height:7px;border-radius:3px;background:#06b6d4;transition:width .6s ease;min-width:2px;}
+.sb-bar-total{height:7px;border-radius:3px;background:#f59e0b;transition:width .6s ease;min-width:2px;}
+.sb-stats{font-size:9px;color:var(--muted2);margin-left:6px;white-space:nowrap;font-family:var(--mono);}
+.sb-divider{width:1px;height:14px;background:var(--border2);}
+
+/* APPROVAL */
+.approval-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-bottom:14px;position:relative;}
+.approval-steps::before{content:'';position:absolute;top:22px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,var(--accent),var(--cyan));z-index:0;opacity:.3;}
+.ap-step{text-align:center;padding:6px;position:relative;z-index:1;}
+.ap-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:18px;border:2px solid var(--border2);}
+.ap-icon.done{background:rgba(16,185,129,0.15);border-color:var(--green);}
+.ap-icon.active{background:rgba(79,110,247,0.2);border-color:var(--accent);}
+.ap-icon.wait{background:var(--bg3);}
+.ap-label{font-size:9px;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:.7px;}
+
+/* FORM */
+.form-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
+.form-sec-title{font-size:9.5px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:8.5px;color:var(--muted2);font-weight:700;letter-spacing:.8px;text-transform:uppercase;}
+.form-group input,.form-group select,.form-group textarea{width:100%;}
+.form-group textarea{resize:vertical;min-height:60px;padding:6px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--font);font-size:11px;outline:none;}
+.check-field{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.check-field:last-child{border:none;}
+.check-field label{font-size:11px;color:var(--text);}
+.cf-right{display:flex;gap:5px;}
+.rb{padding:3px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted2);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;}
+.rb.sel-pass{border-color:var(--green);color:var(--green);background:rgba(16,185,129,.1);}
+.rb.sel-fail{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.1);}
+.rb.sel-rev{border-color:var(--gold);color:var(--gold);background:rgba(245,158,11,.1);}
+
+/* APPROVAL QUEUE */
+.aq-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);margin-bottom:6px;}
+.aq-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;}
+.aq-info{flex:1;}
+.aq-name{font-weight:700;color:#fff;font-size:11.5px;}
+.aq-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.aq-checks{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;}
+.aq-check{padding:1px 6px;border-radius:5px;font-size:9px;font-weight:700;background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
+.aq-check.fail{background:rgba(239,68,68,0.12);color:var(--red);border-color:rgba(239,68,68,0.2);}
+.aq-check.rev{background:rgba(245,158,11,0.12);color:var(--gold);border-color:rgba(245,158,11,0.2);}
+.aq-actions{display:flex;gap:5px;flex-shrink:0;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto;padding:18px;}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.modal-title{font-size:13px;font-weight:800;color:#fff;}
+.close-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--muted);padding:3px 8px;cursor:pointer;font-size:14px;}
+
+/* LEADER CARDS */
+.leader-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
+.lc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:all .2s;cursor:pointer;}
+.lc:hover{transform:translateY(-2px);border-color:var(--accent);}
+.lc-top{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.lc-av{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:800;}
+.lc-name{font-size:11px;font-weight:700;color:#fff;line-height:1.3;}
+.lc-cat{font-size:9px;color:var(--muted);margin-top:1px;}
+.lc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.lc-stat{text-align:center;background:var(--bg3);border-radius:7px;padding:6px 2px;}
+.lc-sv{font-family:var(--mono);font-size:15px;font-weight:600;}
+.lc-sl{font-size:8px;color:var(--muted);text-transform:uppercase;margin-top:1px;}
+.lc-bar{height:4px;border-radius:4px;background:rgba(255,255,255,0.05);margin-top:8px;}
+.lc-fill{height:100%;border-radius:4px;transition:width 1.5s ease;}
+
+/* STUDIO TABS */
+.ot{padding:5px 14px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;margin-right:5px;margin-bottom:8px;}
+.ot.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* ISSUE */
+.issue-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--bg3);margin-bottom:5px;border-left:2px solid var(--border);}
+.ii-label{flex:1;font-size:11px;font-weight:600;}
+.ii-bar{width:80px;height:4px;border-radius:4px;background:rgba(255,255,255,0.05);}
+.ii-fill{height:100%;border-radius:4px;}
+.ii-count{font-family:var(--mono);font-size:14px;font-weight:600;min-width:26px;text-align:right;}
+
+/* ANIM */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ani{animation:fadeIn .3s ease both;}
+.d1{animation-delay:.04s}.d2{animation-delay:.08s}.d3{animation-delay:.12s}.d4{animation-delay:.16s}
+
+@media(max-width:1300px){.kpi-row{grid-template-columns:repeat(3,1fr);}.chart-grid-3{grid-template-columns:1fr;}.leader-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.chart-grid,.wk-compare-wrap{grid-template-columns:1fr;}.kpi-row{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div id="sheet-loader" style="display:none;position:fixed;inset:0;background:rgba(8,13,26,0.92);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:14px;">
+  <div style="width:36px;height:36px;border:3px solid var(--bg4);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;"></div>
+  <div style="color:var(--muted2);font-size:12px;font-weight:600;">Loading data from Google Sheet...</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">PI</div>
+    <div class="logo-text"><b>Pan-India Home Studio</b><span>Audit Dashboard</span></div>
+  </div>
+  <div class="header-center">
+    <button class="tab-btn active" onclick="nav('dashboard',this)">📊 Dashboard</button>
+    <button class="tab-btn" onclick="nav('weekly',this)">📅 Weekly</button>
+    <button class="tab-btn" onclick="nav('leaders',this)">👥 Leaders</button>
+    <button class="tab-btn" onclick="nav('studios',this)">🏠 Studios</button>
+    <button class="tab-btn" onclick="nav('approvals',this)">🔐 Approvals</button>
+    <button class="tab-btn" onclick="nav('audit',this)">🎯 Audit</button>
+    <button class="tab-btn" onclick="nav('issues',this)">⚠️ Issues</button>
+    <button class="tab-btn" onclick="nav('teamperf',this)">📈 Team Performance</button>
+    <button class="tab-btn" onclick="nav('cities',this)">🏙️ Cities</button>
+  </div>
+  <div class="header-right">
+    <div class="hdr-badge"><div class="live-dot"></div>LIVE</div>
+    <span class="date-txt" id="liveDate"></span>
+    <button class="btn-sm btn-accent" onclick="exportCSV()">↓ Export</button>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar">
+  <div class="sb-section">Overview</div>
+  <div class="sb-item active" onclick="nav('dashboard',null,this)"><span class="ic">📊</span>Dashboard</div>
+  <div class="sb-item" onclick="nav('weekly',null,this)"><span class="ic">📅</span>Weekly Report</div>
+  <div class="sb-item" onclick="nav('leaders',null,this)"><span class="ic">👥</span>Leaders</div>
+  <div class="sb-section">Data</div>
+  <div class="sb-item" onclick="nav('studios',null,this)"><span class="ic">🏠</span>All Studios<span class="sb-badge" id="sb-total"<span id="total-studios-badge">371</span></div>
+  <div class="sb-item" onclick="nav('approvals',null,this)"><span class="ic">🔐</span>Approvals<span class="sb-badge" style="background:rgba(239,68,68,0.15);color:var(--red)" id="pendApprBadge">3</span></div>
+  <div class="sb-item" onclick="nav('audit',null,this)"><span class="ic">🎯</span>Do Audit</div>
+  <div class="sb-item" onclick="nav('issues',null,this)"><span class="ic">⚠️</span>Issues</div>
+  <div class="sb-item" onclick="nav('teamperf',null,this)"><span class="ic">📈</span>Team Performance</div>
+  <div class="sb-item" onclick="nav('cities',null,this)"><span class="ic">🏙️</span>Cities</div>
+  <div class="sb-section">Actions</div>
+  <div class="sb-item" onclick="exportCSV()"><span class="ic">↓</span>Export CSV</div>
+</div>
+
+<div class="main">
+
+<!-- ══ DASHBOARD ══ -->
+<div class="page active" id="page-dashboard">
+  <div class="phb ani d1">
+    <div>
+      <div class="phb-title">Pan-India <span>Home Studio</span></div>
+      <div class="phb-sub">Studio quality tracking — Week 18 (Apr 21–26, 2026) · <span id="total-studios-sub">371</span> total studios</div>
+    </div>
+  </div>
+
+  <div class="kpi-row ani d2">
+    <div class="kpi c-cyan"><div class="kpi-glow"></div><div class="kpi-label">Total Studios</div><div class="kpi-val" id="kpi-total-studios">371</div><div class="kpi-sub" id="kpi-total-sub">↑ +8 vs last week</div><div class="kpi-bar"><div class="kpi-fill" id="kf1" style="width:0%"></div></div></div>
+    <div class="kpi c-green"><div class="kpi-glow"></div><div class="kpi-label">Quality Improved</div><div class="kpi-val" id="kpi-quality">305</div><div class="kpi-sub" id="kpi-quality-sub">84.5% of total</div><div class="kpi-bar"><div class="kpi-fill" id="kf2" style="width:0%"></div></div></div>
+    <div class="kpi c-gold"><div class="kpi-glow"></div><div class="kpi-label">WIP (In Progress)</div><div class="kpi-val" id="kpi-wip">56</div><div class="kpi-sub" id="kpi-wip-sub">15.5% of total</div><div class="kpi-bar"><div class="kpi-fill" id="kf3" style="width:0%"></div></div></div>
+    <div class="kpi c-blue"><div class="kpi-glow"></div><div class="kpi-label">Audits This Week</div><div class="kpi-val">47</div><div class="kpi-sub">↑ +12 vs last week</div><div class="kpi-bar"><div class="kpi-fill" id="kf4" style="width:0%"></div></div></div>
+    <div class="kpi c-purple"><div class="kpi-glow"></div><div class="kpi-label">New Studios (Week)</div><div class="kpi-val">8</div><div class="kpi-sub">↑ +3 this month</div><div class="kpi-bar"><div class="kpi-fill" id="kf5" style="width:0%;background:var(--purple)"></div></div></div>
+    <div class="kpi c-red"><div class="kpi-glow"></div><div class="kpi-label">Inactive / Flagged</div><div class="kpi-val">10</div><div class="kpi-sub">This Week: <b style="color:var(--red)">4</b> &nbsp;·&nbsp; Month: <b style="color:var(--red)">10</b></div><div class="kpi-bar"><div class="kpi-fill" id="kf6" style="width:0%;background:var(--red)"></div></div></div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="chart-grid-3 ani d3">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">📊 Weekly Audit Trend</div><div class="card-sub">Audits per week W14→W18</div></div></div>
+      <div class="chart-box"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">🧑‍🏫 Educator Studios</div><div class="card-sub">209 total — quality status</div></div></div>
+      <div style="position:relative;height:130px;"><canvas id="edChart"></canvas></div>
+      <div class="donut-legend" id="edLegend"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">🏢 PW Studios</div><div class="card-sub">152 total — quality status</div></div></div>
+      <div style="position:relative;height:130px;"><canvas id="pwChart"></canvas></div>
+      <div class="donut-legend" id="pwLegend"></div>
+    </div>
+  </div>
+
+  <!-- Issues + New Studios -->
+  <div class="chart-grid ani d3">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">⚠️ Top Issue Categories</div><div class="card-sub">Most flagged issues this week</div></div></div>
+      <div class="chart-box" style="height:190px;"><canvas id="issueBarChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">✨ New Studios — Week-wise</div><div class="card-sub">Added each week by category</div></div></div>
+      <div class="chart-box"><canvas id="newStudiosChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Leader-wise Summary -->
+  <div class="card ani d4" style="margin-bottom:10px;">
+    <div class="card-hdr" style="margin-bottom:8px;">
+      <div>
+        <div style="font-size:12px;font-weight:800;color:#fff;">Leader-wise Summary <span style="color:var(--muted2);font-weight:500;font-size:11px;">(Current Week)</span></div>
+        <div style="font-size:9.5px;color:var(--muted);margin-top:2px;">PW Owned + Educator Owned breakdown</div>
+      </div>
+      <div class="toggle-group">
+        <button class="tog active" id="ldrWkBtn" onclick="switchLdrPeriod('week',this)">Week</button>
+        <button class="tog" id="ldrMoBtn" onclick="switchLdrPeriod('month',this)">Month</button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="ldr-tbl">
+        <thead>
+          <tr>
+            <th rowspan="2" style="text-align:left;background:var(--bg3);border:1px solid var(--border);vertical-align:middle;">Leader</th>
+            <th rowspan="2" style="background:var(--bg3);border:1px solid var(--border);vertical-align:middle;">Total<br>Studios</th>
+            <th colspan="3" style="background:rgba(79,110,247,0.12);color:var(--accent2);border:1px solid var(--border);">Quality Improved (Home Studio)</th>
+            <th colspan="3" style="background:rgba(245,158,11,0.10);color:var(--gold);border:1px solid var(--border);">WIP (Home Studio)</th>
+          </tr>
+          <tr>
+            <th style="background:rgba(79,110,247,0.07);border:1px solid var(--border);">PW Owned</th>
+            <th style="background:rgba(79,110,247,0.07);border:1px solid var(--border);">Educator Owned</th>
+            <th style="background:rgba(79,110,247,0.07);border:1px solid var(--border);">Total</th>
+            <th style="background:rgba(245,158,11,0.07);border:1px solid var(--border);">PW Owned</th>
+            <th style="background:rgba(245,158,11,0.07);border:1px solid var(--border);">Educator Owned</th>
+            <th style="background:rgba(245,158,11,0.07);border:1px solid var(--border);">Total</th>
+          </tr>
+        </thead>
+        <tbody id="leaderSummaryBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WEEKLY ══ -->
+<div class="page" id="page-weekly">
+  <div class="sec-hdr">
+    <div>
+      <div class="sec-title" id="wkPageTitle">Weekly <span>Report</span></div>
+      <div class="sec-sub" id="wkPageSub">W17 vs W18 — side-by-side comparison</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px;">View</label>
+      <select id="rptPeriodSel" onchange="switchRptPeriod()" style="font-size:11px;padding:4px 10px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-weight:600;cursor:pointer;">
+        <option value="weekly">📅 Week Wise</option>
+        <option value="monthly">📆 Month Wise</option>
+        <option value="yearly">📊 Yearly</option>
+      </select>
+      <button class="btn-sm btn-accent" onclick="alert('PDF export coming soon!')">↓ Export PDF</button>
+    </div>
+  </div>
+
+  <!-- ── WEEKLY VIEW ── -->
+  <div id="rpt-weekly-view">
+    <!-- Week selector for compare -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <label style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;">Compare:</label>
+      <select id="wkCmpA" onchange="buildWeekCompare()" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);">
+        <option value="w14">Week 14 (Mar 24–30)</option>
+        <option value="w15">Week 15 (Mar 31–Apr 6)</option>
+        <option value="w16">Week 16 (Apr 7–13)</option>
+        <option value="w17" selected>Week 17 (Apr 14–20)</option>
+        <option value="w18">Week 18 (Apr 21–26)</option>
+      </select>
+      <span style="color:var(--muted);font-size:12px;">vs</span>
+      <select id="wkCmpB" onchange="buildWeekCompare()" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);">
+        <option value="w14">Week 14 (Mar 24–30)</option>
+        <option value="w15">Week 15 (Mar 31–Apr 6)</option>
+        <option value="w16">Week 16 (Apr 7–13)</option>
+        <option value="w17">Week 17 (Apr 14–20)</option>
+        <option value="w18" selected>Week 18 (Apr 21–26)</option>
+      </select>
+    </div>
+    <div class="wk-compare-wrap">
+      <div class="wk-card">
+        <div class="wk-card-hdr"><div class="wk-card-title" id="wkCardTitleA">📅 Week 17 <span class="wk-tag prev">Apr 14–20</span></div></div>
+        <div id="w17rows"></div>
+      </div>
+      <div class="wk-card">
+        <div class="wk-card-hdr"><div class="wk-card-title" id="wkCardTitleB">📅 Week 18 <span class="wk-tag curr">Apr 21–26</span></div></div>
+        <div id="w18rows"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:10px;">
+      <div class="card-hdr">
+        <div><div class="card-title">📊 Week-wise Audit Count</div><div class="card-sub">W14→W18 breakdown by category</div></div>
+        <div class="toggle-group">
+          <button class="tog active" onclick="switchWeeklyChart('cat',this)">By Category</button>
+          <button class="tog" onclick="switchWeeklyChart('leader',this)">By Leader</button>
+        </div>
+      </div>
+      <div class="chart-box" style="height:220px;"><canvas id="weeklyLeaderChart"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:10px;">
+      <div class="card-hdr"><div><div class="card-title">📋 Audit Summary — Week by Week</div></div></div>
+      <div class="tbl-wrap">
+        <table class="wat">
+          <thead><tr><th>Week</th><th>Total</th><th>Audits</th><th>Improved</th><th>WIP</th><th>New Added</th><th>JEE/NEET</th><th>UPSC</th><th>Banking</th><th>CA</th></tr></thead>
+          <tbody id="weekTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">📈 Studio Status History</div><div class="card-sub">Quality Improved & WIP per week</div></div></div>
+      <div class="chart-box" style="height:180px;"><canvas id="statusHistChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── MONTHLY VIEW ── -->
+  <div id="rpt-monthly-view" style="display:none;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <label style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;">Select Month:</label>
+      <select id="monthSel" onchange="buildMonthlyView()" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);">
+        <option value="jan">January 2026</option>
+        <option value="feb">February 2026</option>
+        <option value="mar">March 2026</option>
+        <option value="apr" selected>April 2026</option>
+      </select>
+    </div>
+    <!-- Month KPIs -->
+    <div class="kpi-row" id="monthKpiRow" style="margin-bottom:12px;"></div>
+    <!-- Month compare cards -->
+    <div class="wk-compare-wrap" style="margin-bottom:10px;">
+      <div class="wk-card">
+        <div class="wk-card-hdr"><div class="wk-card-title">📆 <span id="monthCurrLabel">April 2026</span> <span class="wk-tag curr">Current</span></div></div>
+        <div id="monthCurrRows"></div>
+      </div>
+      <div class="wk-card">
+        <div class="wk-card-hdr"><div class="wk-card-title">📆 <span id="monthPrevLabel">March 2026</span> <span class="wk-tag prev">Previous</span></div></div>
+        <div id="monthPrevRows"></div>
+      </div>
+    </div>
+    <!-- Monthly week breakdown table -->
+    <div class="card" style="margin-bottom:10px;">
+      <div class="card-hdr"><div><div class="card-title">📋 Week-wise Breakdown — <span id="monthTableTitle">April 2026</span></div><div class="card-sub">All weeks in this month</div></div></div>
+      <div class="tbl-wrap">
+        <table class="wat">
+          <thead><tr><th>Week</th><th>Dates</th><th>Total Studios</th><th>Audits Done</th><th>Quality Improved</th><th>WIP</th><th>New Added</th><th>Completion %</th></tr></thead>
+          <tbody id="monthWeekBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Monthly trend chart -->
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">📈 Monthly Trend</div><div class="card-sub">Jan–Apr 2026 — Improved vs WIP</div></div></div>
+      <div class="chart-box" style="height:190px;"><canvas id="monthTrendChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── YEARLY VIEW ── -->
+  <div id="rpt-yearly-view" style="display:none;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <label style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;">Year:</label>
+      <select id="yearSel" onchange="buildYearlyView()" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);">
+        <option value="2025">2025</option>
+        <option value="2026" selected>2026</option>
+      </select>
+    </div>
+    <!-- Yearly KPIs -->
+    <div class="kpi-row" id="yearKpiRow" style="margin-bottom:12px;grid-template-columns:repeat(4,1fr);"></div>
+    <!-- Yearly month-wise table -->
+    <div class="card" style="margin-bottom:10px;">
+      <div class="card-hdr"><div><div class="card-title">📋 Month-wise Summary — <span id="yearTableTitle">2026</span></div><div class="card-sub">Jan → Dec — studio quality tracking</div></div></div>
+      <div class="tbl-wrap">
+        <table class="wat">
+          <thead><tr><th>Month</th><th>Total Studios</th><th>Audits Done</th><th>Quality Improved</th><th>WIP</th><th>New Added</th><th>JEE/NEET</th><th>UPSC</th><th>Banking</th><th>CA</th><th>Completion %</th></tr></thead>
+          <tbody id="yearTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Yearly chart -->
+    <div class="chart-grid">
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">📊 Monthly Audit Volume</div><div class="card-sub">Audits done per month</div></div></div>
+        <div class="chart-box" style="height:200px;"><canvas id="yearAuditChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">📈 Quality Improved vs WIP Trend</div><div class="card-sub">Month-wise progress</div></div></div>
+        <div class="chart-box" style="height:200px;"><canvas id="yearStatusChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEADERS ══ -->
+<div class="page" id="page-leaders">
+  <div class="sec-hdr">
+    <div><div class="sec-title">Leader <span>Performance</span></div><div class="sec-sub">Click a card to see studio details</div></div>
+  </div>
+  <div class="leader-grid" id="leaderCards"></div>
+  <div class="card" id="leaderDetail" style="display:none;">
+    <div class="card-hdr">
+      <div><div class="card-title" id="ldTitle"></div><div class="card-sub" id="ldSub"></div></div>
+      <button class="btn-sm" onclick="document.getElementById('leaderDetail').style.display='none'">✕ Close</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Faculty</th><th>Category</th><th>City</th><th>Ownership</th><th>Status</th><th>Reflection</th><th>Audio</th><th>Light</th><th>Auditor</th><th>Date</th></tr></thead>
+        <tbody id="ldStudioBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STUDIOS ══ -->
+<div class="page" id="page-studios">
+  <div class="sec-hdr"><div><div class="sec-title">All <span>Studios</span></div></div></div>
+  <div>
+    <button class="ot active" onclick="setOwnerTab('all',this)">🌐 All (361)</button>
+    <button class="ot" onclick="setOwnerTab('pw',this)">🏢 PW Owned (152)</button>
+    <button class="ot" onclick="setOwnerTab('educator',this)">🧑‍🏫 Educator Owned (209)</button>
+  </div>
+  <div class="filter-bar">
+    <label>Leader</label>
+    <select id="fLeader" onchange="filterStudios()"><option value="">All</option><option>Sanyam Jain Sir</option><option>Rajat Agarwal Sir</option><option>Prashant Soni → Abhishek Sir</option><option>Manish Kumar Sir</option><option>Offline Sir (Pathshala)</option><option>Ankit Kohli Sir (Power Batch)</option><option>Mohammed Saad Salmaan Sir</option></select>
+    <div class="filter-sep"></div>
+    <label>Status</label>
+    <select id="fStatus" onchange="filterStudios()"><option value="">All</option><option value="perfect">Improved</option><option value="wip">WIP</option><option value="pending">Pending</option></select>
+    <div class="filter-sep"></div>
+    <label>City</label>
+    <select id="fCity" onchange="filterStudios()"><option value="">All</option></select>
+    <div class="filter-sep"></div>
+    <input type="text" id="fSearch" placeholder="Name / Category..." oninput="filterStudios()" style="width:130px;"/>
+    <div class="filter-sep"></div>
+    <label>Auditor</label>
+    <select id="fAuditor" onchange="filterStudios()"><option value="">All Auditors</option><option>Vinay Pal</option><option>Ajit Bala</option><option>Vishnu Pandey</option><option>Kapil Sharma</option><option>Abhimanyu Singh</option><option>Sanjay Yadav</option></select>
+    <div class="filter-sep"></div>
+    <label>Audit Type</label>
+    <select id="fAuditType" onchange="filterStudios()"><option value="">All Types</option><option>Virtual</option><option>Home Visit</option></select>
+  </div>
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-title" id="studioCount">All Studios</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(99,102,241,0.4);border:1px solid #6366f1;"></div><span style="font-size:9px;color:#a5b4fc;font-weight:700;">Home Studio Video Link — Other Team</span></div>
+        <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(16,185,129,0.35);border:1px solid #10b981;"></div><span style="font-size:9px;color:#6ee7b7;font-weight:700;">Audit Params — Audit Team</span></div>
+        <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(245,158,11,0.35);border:1px solid #f59e0b;"></div><span style="font-size:9px;color:#fcd34d;font-weight:700;">Audit Details</span></div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2" style="background:var(--bg4);vertical-align:middle;">#</th>
+            <th colspan="6" style="background:rgba(99,102,241,0.18);color:#a5b4fc;border-bottom:2px solid #6366f1;text-align:center;font-size:9px;letter-spacing:1.5px;">🎥 HOME STUDIO VIDEO LINK — Other Team</th>
+            <th colspan="8" style="background:rgba(16,185,129,0.13);color:#6ee7b7;border-bottom:2px solid #10b981;text-align:center;font-size:9px;letter-spacing:1.5px;">✅ AUDIT PARAMETERS — Audit Team</th>
+            <th colspan="3" style="background:rgba(245,158,11,0.13);color:#fcd34d;border-bottom:2px solid #f59e0b;text-align:center;font-size:9px;letter-spacing:1.5px;">📋 AUDIT DETAILS</th>
+            <th rowspan="2" style="background:var(--bg4);vertical-align:middle;"></th>
+          </tr>
+          <tr>
+            <th style="background:rgba(99,102,241,0.10);color:#a5b4fc;border-top:none;">Faculty</th>
+            <th style="background:rgba(99,102,241,0.10);color:#a5b4fc;border-top:none;">Leader</th>
+            <th style="background:rgba(99,102,241,0.10);color:#a5b4fc;border-top:none;">Category</th>
+            <th style="background:rgba(99,102,241,0.10);color:#a5b4fc;border-top:none;">City</th>
+            <th style="background:rgba(99,102,241,0.10);color:#a5b4fc;border-top:none;">Ownership</th>
+            <th style="background:rgba(99,102,241,0.10);color:#a5b4fc;border-top:none;">Video Link</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">📷 Camera</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">🪞 Reflection</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">💡 Lighting</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">🎙️ Audio</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">🔊 AV Sync</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">📋 Board</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">📌 IRF</th>
+            <th style="background:rgba(16,185,129,0.08);color:#6ee7b7;border-top:none;">Final Status</th>
+            <th style="background:rgba(245,158,11,0.09);color:#fcd34d;border-top:none;">👤 Auditor</th>
+            <th style="background:rgba(245,158,11,0.09);color:#fcd34d;border-top:none;">🏠 Type</th>
+            <th style="background:rgba(245,158,11,0.09);color:#fcd34d;border-top:none;">Date</th>
+          </tr>
+        </thead>
+        <tbody id="studioBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APPROVALS ══ -->
+<div class="page" id="page-approvals">
+  <div class="sec-hdr">
+    <div><div class="sec-title">Studio <span>Approvals</span></div><div class="sec-sub">Pending approval queue</div></div>
+    <span class="pill pill-red" id="pendingApprovalCount">3 Pending</span>
+  </div>
+
+  <div class="card" style="margin-bottom:10px;">
+    <div class="card-hdr"><div><div class="card-title">📋 Approval Workflow</div></div></div>
+    <div class="approval-steps">
+      <div class="ap-step"><div class="ap-icon done">🔗</div><div class="ap-label">Studio Request</div></div>
+      <div class="ap-step"><div class="ap-icon active">🏠</div><div class="ap-label">Studio Checked</div></div>
+      <div class="ap-step"><div class="ap-icon active" id="videoAddedStep" style="cursor:pointer;" onclick="openLatestVideo()" title="Click to open video link">🔗</div><div class="ap-label">Video Added</div></div>
+      <div class="ap-step"><div class="ap-icon wait">✅</div><div class="ap-label">Approved</div></div>
+      <div class="ap-step"><div class="ap-icon wait">🚀</div><div class="ap-label">Goes LIVE</div></div>
+    </div>
+  </div>
+  <div id="approvalList"></div>
+
+</div>
+
+<!-- ══ ISSUES ══ -->
+<div class="page" id="page-issues">
+  <div class="sec-hdr">
+    <div><div class="sec-title">Issue <span>Analytics</span></div></div>
+    <select id="issuePeriodSel" onchange="renderIssues()"><option value="this">This Week (W18)</option><option value="last">Last Week (W17)</option><option value="w2">W16</option></select>
+  </div>
+  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
+    <div class="kpi c-red"><div class="kpi-glow"></div><div class="kpi-label">🪞 Reflection</div><div class="kpi-val" id="ik-ref">23</div><div class="kpi-bar"><div class="kpi-fill" id="ikf-ref" style="width:0%;background:var(--red)"></div></div></div>
+    <div class="kpi c-blue"><div class="kpi-glow"></div><div class="kpi-label">📷 Camera Frame</div><div class="kpi-val" id="ik-frame">19</div><div class="kpi-bar"><div class="kpi-fill" id="ikf-frame" style="width:0%;background:var(--blue)"></div></div></div>
+    <div class="kpi c-gold"><div class="kpi-glow"></div><div class="kpi-label">🎬 Video Quality</div><div class="kpi-val" id="ik-video">15</div><div class="kpi-bar"><div class="kpi-fill" id="ikf-video" style="width:0%;background:var(--gold)"></div></div></div>
+    <div class="kpi c-orange" style="border-color:rgba(249,115,22,.2)"><div class="kpi-glow" style="background:var(--orange)"></div><div class="kpi-label">🎙️ Audio Quality</div><div class="kpi-val" id="ik-audio" style="color:var(--orange)">14</div><div class="kpi-bar"><div class="kpi-fill" id="ikf-audio" style="width:0%;background:var(--orange)"></div></div></div>
+    <div class="kpi c-purple"><div class="kpi-glow"></div><div class="kpi-label">🔊 AV Sync</div><div class="kpi-val" id="ik-avs">10</div><div class="kpi-bar"><div class="kpi-fill" id="ikf-avs" style="width:0%;background:var(--purple)"></div></div></div>
+
+  </div>
+  <div class="chart-grid">
+    <div class="card"><div class="card-hdr"><div><div class="card-title">📈 Issue Trend W14–W18</div></div></div><div class="chart-box"><canvas id="issueTrendChart"></canvas></div></div>
+    <div class="card"><div class="card-hdr"><div><div class="card-title">🥧 Issue Split</div></div></div><div style="position:relative;height:160px;"><canvas id="issueSplitChart"></canvas></div><div class="donut-legend" id="issueSplitLegend"></div></div>
+  </div>
+
+  <!-- PW vs Educator + Issues by Leader -->
+  <div class="chart-grid" style="margin-top:10px;">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">🏢 PW Owned vs Educator Faculty Issues</div><div class="card-sub">Issue count comparison by ownership</div></div></div>
+      <div class="chart-box" style="height:220px;"><canvas id="pwEduIssueChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">👥 Issues by Leader</div><div class="card-sub">Which team has the most flags</div></div></div>
+      <div class="chart-box" style="height:220px;"><canvas id="leaderIssueChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- City-wise Issue Breakdown -->
+  <div class="card" style="margin-top:10px;">
+    <div class="card-hdr">
+      <div><div class="card-title">🏙️ City-wise Issue Breakdown</div><div class="card-sub">Total issues per city with parameter split</div></div>
+      <div class="toggle-group">
+        <button class="tog active" onclick="switchCityIssueView('table',this)">Table</button>
+        <button class="tog" onclick="switchCityIssueView('chart',this)">Chart</button>
+      </div>
+    </div>
+    <div id="cityIssueTableWrap">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th style="text-align:left;">CITY</th>
+            <th style="color:#ef4444;">🪞 REFLECTION</th>
+            <th style="color:#3b82f6;">📷 CAMERA FRAME</th>
+            <th style="color:#f59e0b;">💡 LIGHTING</th>
+            <th style="color:#8b5cf6;">🔊 AV SYNC</th>
+            <th style="color:#f97316;">🎙️ AUDIO</th>
+            <th>TOTAL ISSUES</th>
+            <th>SEVERITY</th>
+          </tr></thead>
+          <tbody id="cityIssueBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="cityIssueChartWrap" style="display:none;">
+      <div class="chart-box" style="height:260px;"><canvas id="cityIssueBarChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CITIES ══ -->
+<div class="page" id="page-cities">
+  <div class="sec-hdr">
+    <div><div class="sec-title">City <span>View</span></div></div>
+    <input type="text" id="citySearch" placeholder="Search city..." oninput="filterCities()" style="width:130px;"/>
+  </div>
+
+  <!-- ALL LOCATIONS — STUDIO BREAKUP (image-style chart) -->
+  <div class="sb-chart-wrap">
+    <div class="sb-chart-hdr">
+      <div class="sb-chart-title">ALL LOCATIONS — STUDIO BREAKUP</div>
+      <div class="sb-controls">
+        <select id="sbFilterSel" onchange="renderStudioBreakup()" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);">
+          <option value="all">All Studios</option>
+          <option value="pw">PW Owned Only</option>
+          <option value="edu">Educator Owned Only</option>
+        </select>
+        <div class="sb-divider"></div>
+        <select id="sbSortSel" onchange="renderStudioBreakup()" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);">
+          <option value="total">Sort by Total</option>
+          <option value="pw">Sort by PW</option>
+          <option value="edu">Sort by Edu</option>
+        </select>
+        <div class="sb-divider"></div>
+        <div class="sb-legend">
+          <div class="sb-leg-item"><div class="sb-leg-dot" style="background:#8b5cf6"></div>PW</div>
+          <div class="sb-leg-item"><div class="sb-leg-dot" style="background:#06b6d4"></div>Edu</div>
+          <div class="sb-leg-item"><div class="sb-leg-dot" style="background:#f59e0b"></div>Total</div>
+        </div>
+        <span class="sb-loc-count" id="sbLocCount">15 locations</span>
+      </div>
+    </div>
+    <div class="sb-row-wrap" id="sbRowWrap"></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">📍 All Cities — Studio Breakdown</div></div></div>
+    <div class="tbl-wrap">
+      <table class="city-tbl" id="cityTable">
+        <thead><tr><th>City</th><th>Total</th><th>PW Improved</th><th>Educator Improved</th><th>Total Improved</th><th>WIP</th><th>Pending</th><th>Completion</th></tr></thead>
+        <tbody id="cityTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ TEAM PERFORMANCE ══ -->
+<div class="page" id="page-teamperf">
+  <div class="sec-hdr">
+    <div><div class="sec-title">Team <span>Performance</span></div><div class="sec-sub">Audit team — kisne kitne audit kiye, Virtual vs Home Visit</div></div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <label style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;">Period</label>
+      <select id="tpPeriodSel" onchange="renderTeamPerf()" style="font-size:11px;">
+        <option value="w18">Week 18 (Apr 21–26)</option>
+        <option value="w17">Week 17 (Apr 14–20)</option>
+        <option value="w16">Week 16 (Apr 7–13)</option>
+        <option value="w15">Week 15 (Mar 31–Apr 6)</option>
+        <option value="w14">Week 14 (Mar 24–30)</option>
+        <option value="monthly">Monthly (All Weeks)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-row" id="tpKpiRow" style="margin-bottom:12px;"></div>
+
+  <!-- Charts -->
+  <div class="chart-grid" style="margin-bottom:10px;">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">📊 Audits Per Member — Week Wise</div><div class="card-sub">W14 → W18 trend per auditor</div></div></div>
+      <div class="chart-box" style="height:200px;"><canvas id="tpTrendChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">🏠 Virtual vs Home Visit Split</div><div class="card-sub">Audit type breakdown per member</div></div></div>
+      <div class="chart-box" style="height:200px;"><canvas id="tpTypeChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="card" style="margin-bottom:10px;">
+    <div class="card-hdr"><div class="card-title" id="tpTableTitle">📋 Team Summary</div></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Auditor Name</th>
+          <th>Total Audits</th><th>🖥️ Virtual</th><th>🏠 Home Visit</th>
+          <th>📌 IRF Raised</th>
+          <th>Avg/Day</th><th>Performance</th>
+        </tr></thead>
+        <tbody id="tpTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Faculty-wise Audit Log -->
+  <div class="card">
+    <div class="card-hdr">
+      <div><div class="card-title">🔍 Faculty-wise Audit Log</div><div class="card-sub">Search by faculty name or city</div></div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <select id="tpAuditorFilter" onchange="renderTPLog()" style="font-size:11px;min-width:150px;">
+          <option value="">All Auditors</option>
+          <option>Vinay Pal</option><option>Ajit Bala</option><option>Vishnu Pandey</option>
+          <option>Kapil Sharma</option><option>Abhimanyu Singh</option><option>Sanjay Yadav</option>
+        </select>
+        <select id="tpTypeFilter" onchange="renderTPLog()" style="font-size:11px;">
+          <option value="">All Types</option>
+          <option value="Virtual">🖥️ Virtual</option>
+          <option value="Home Visit">🏠 Home Visit</option>
+        </select>
+        <input type="text" id="tpSearch" placeholder="Faculty / City..." oninput="renderTPLog()" style="width:130px;"/>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Faculty</th><th>Leader</th><th>Category</th><th>City</th><th>Auditor</th><th>Audit Type</th><th>Final Status</th><th>Date</th></tr></thead>
+        <tbody id="tpLogBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ AUDIT PAGE ══ -->
+<div class="page" id="page-audit">
+  <div class="sec-hdr">
+    <div><div class="sec-title">🎯 Do <span>Audit</span></div><div class="sec-sub">Fill form → Submit → Email automatic jayegi</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%">
+
+    <!-- LEFT — Faculty & Studio Info -->
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">👤 Faculty & Studio Info</div></div></div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
+        <div class="form-group"><label>Faculty Name *</label><input type="text" id="a2-af-faculty" placeholder="Faculty ka naam"/></div>
+        <div class="form-group"><label>Leader *</label>
+          <select id="a2-af-leader" onchange="afUpdateCat()">
+            <option value="">Select Leader</option>
+            <option>Sanyam Jain Sir</option>
+            <option>Rajat Agarwal Sir</option>
+            <option>Prashant Soni → Abhishek Sir</option>
+            <option>Manish Kumar Sir</option>
+            <option>Offline Sir (Pathshala)</option>
+            <option>Ankit Kohli Sir (Power Batch)</option>
+            <option>Mohammed Saad Salmaan Sir</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Category</label><select id="a2-af-category"><option value="">Select</option></select></div>
+        <div class="form-group"><label>City *</label><input type="text" id="a2-af-city" placeholder="Jaise: Delhi, Patna..."/></div>
+        <div class="form-group"><label>Ownership</label>
+          <select id="a2-af-ownership">
+            <option value="educator">Educator Owned</option>
+            <option value="pw">PW Owned</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Video Link *</label><input type="text" id="a2-af-video" placeholder="Drive/YouTube link"/></div>
+        <div class="form-group"><label>Faculty Email</label><input type="text" id="a2-af-mail" placeholder="faculty@email.com"/></div>
+        <div class="form-group"><label>Contact</label><input type="text" id="a2-af-contact" placeholder="Mobile number"/></div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Audit Details -->
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">📋 Audit Details</div></div></div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
+        <div class="form-group"><label>Auditor Name *</label><input type="text" id="a2-af-auditor" placeholder="Aapka naam"/></div>
+        <div class="form-group"><label>Audit Type *</label>
+          <select id="a2-af-auditType">
+            <option value="">Select</option>
+            <option value="Virtual">Virtual</option>
+            <option value="Home Visit">Home Visit</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Date *</label><input type="date" id="a2-af-date"/></div>
+        <div class="form-group"><label>Remark</label><input type="text" id="a2-af-remark" placeholder="Optional notes..."/></div>
+        <div class="form-group"><label>Status</label>
+          <select id="a2-af-status">
+            <option value="perfect">✅ Perfect Studio</option>
+            <option value="wip">🔧 WIP</option>
+            <option value="approved">🔐 Send for Approval</option>
+          </select>
+        </div>
+
+        <!-- Quality Parameters -->
+        <div style="margin-top:4px;">
+          <div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">Quality Parameters</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">📷 Camera Frame</span>
+              <select id="a2-afq-camera-frame" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
+                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+              </select>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">🪞 Reflection</span>
+              <select id="a2-afq-reflection" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
+                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+              </select>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">💡 Lighting</span>
+              <select id="a2-afq-lighting" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
+                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+              </select>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">🎙️ Audio</span>
+              <select id="a2-afq-audio" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
+                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+              </select>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">🔊 AV Sync</span>
+              <select id="a2-afq-av-sync" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
+                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+              </select>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">📋 Board</span>
+              <select id="a2-afq-board" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
+                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+              </select>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">📌 IRF</span>
+              <select id="a2-afq-irf" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
+                <option value="">Select</option><option value="No">✅ No</option><option value="Yes">⚠️ Yes</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <div style="max-width:1000px;margin-top:12px;display:flex;gap:10px;justify-content:flex-end;">
+    <button class="btn-sm" onclick="afReset()">🔄 Reset</button>
+    <button class="btn-sm btn-accent" style="padding:8px 24px;font-size:13px;" onclick="afSubmit()">🚀 Submit Audit & Send Email</button>
+  </div>
+</div><!-- /page-audit -->
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+
+
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">➕ Add New Studio</div><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Faculty Name *</label><input type="text" id="ns-name"/></div>
+      <div class="form-group"><label>Leader *</label><select id="ns-leader" onchange="updateNSCat()"><option value="">Select</option><option>Sanyam Jain Sir</option><option>Rajat Agarwal Sir</option><option>Prashant Soni → Abhishek Sir</option><option>Manish Kumar Sir</option><option>Offline Sir (Pathshala)</option><option>Ankit Kohli Sir (Power Batch)</option><option>Mohammed Saad Salmaan Sir</option></select></div>
+      <div class="form-group"><label>Category</label><select id="ns-category"><option value="">Select</option></select></div>
+      <div class="form-group"><label>City *</label><input type="text" id="ns-city"/></div>
+      <div class="form-group"><label>Ownership</label><select id="ns-ownership"><option value="educator">Educator Owned</option><option value="pw">PW Owned</option></select></div>
+      <div class="form-group"><label>Video Link</label><input type="text" id="ns-video"/></div>
+    </div>
+    <div style="text-align:right;margin-top:12px;"><button class="btn-sm" onclick="closeModal()">Cancel</button><button class="btn-sm btn-accent" onclick="saveStudio()" style="margin-left:6px;">Save</button></div>
+  </div>
+</div>
+
+<script>
+// ═══ DATA ═══
+const LEADERS_CFG={
+  'Sanyam Jain Sir':{color:'#7b93ff',cats:['AIR','CUET UG','Foundation','Foundation & Board','Gurukul','IIT-JEE','NDA','NEET','Vernacular']},
+  'Rajat Agarwal Sir':{color:'#10b981',cats:['AE/JE','BPSC','GATE','Judiciary','MPPSC','MPSC','OPSC','Ras Wallah','UPPSC','UPSC']},
+  'Prashant Soni → Abhishek Sir':{color:'#ef4444',cats:['Banking','Bihar Exams','JAIIB CAIIB','Pharma','SSC','SSC / Railways','TET','WBPSC']},
+  'Manish Kumar Sir':{color:'#8b5cf6',cats:['ACCA','BFSI','CA','COMMERCE','CS','SIR NET','IIT JAM','Law','MBA','MedEd','Nursing','UGC NET']},
+  'Offline Sir (Pathshala)':{color:'#f59e0b',cats:['Pathshala']},
+  'Ankit Kohli Sir (Power Batch)':{color:'#06b6d4',cats:['Power Batch']},
+  'Mohammed Saad Salmaan Sir':{color:'#f97316',cats:['General']},
+};
+
+const WEEK_DATA={
+  w14:{label:'W14',dates:'Mar 31–Apr 6', total:337,audits:31,wip:75,perfect:250,newAdded:4,jee:8,upsc:9,banking:8,ca:6},
+  w15:{label:'W15',dates:'Apr 7–13',     total:345,audits:38,wip:68,perfect:265,newAdded:6,jee:10,upsc:11,banking:10,ca:7},
+  w16:{label:'W16',dates:'Apr 14–20',    total:358,audits:42,wip:62,perfect:284,newAdded:5,jee:11,upsc:12,banking:11,ca:8},
+  w17:{label:'W17',dates:'Apr 14–20',    total:363,audits:35,wip:60,perfect:292,newAdded:9,jee:9, upsc:10,banking:9, ca:7},
+  w18:{label:'W18',dates:'Apr 21–26',    total:361,audits:47,wip:56,perfect:305,newAdded:8,jee:12,upsc:13,banking:12,ca:10},
+};
+const WEEKS=['w14','w15','w16','w17','w18'];
+const WL=['W14','W15','W16','W17','W18'];
+
+// Week data — cumulative totals
+const LEADER_WEEK={
+  'Sanyam Jain Sir':     {total:127,pwP:69,edP:44,totP:113,pwW:11,edW:3, totW:14},
+  'Rajat Agarwal Sir':   {total:99, pwP:50,edP:37,totP:87, pwW:5, edW:7, totW:12},
+  'Prashant Soni → Abhishek Sir':{total:36,pwP:3,edP:22,totP:25,pwW:1,edW:10,totW:11},
+  'Manish Kumar Sir':    {total:79, pwP:28,edP:41,totP:69, pwW:4, edW:6, totW:10},
+  'Offline Sir (Pathshala)':{total:21,pwP:5,edP:4,totP:9,pwW:2,edW:0,totW:2},
+  'Ankit Kohli Sir (Power Batch)':{total:3,pwP:1,edP:0,totP:1,pwW:2,edW:0,totW:2},
+  'Mohammed Saad Salmaan Sir':{total:6,pwP:0,edP:1,totP:1,pwW:2,edW:3,totW:5},
+};
+// Month data — higher values
+const LEADER_MONTH={
+  'Sanyam Jain Sir':     {total:127,pwP:80,edP:32,totP:112,pwW:0,edW:15,totW:15},
+  'Rajat Agarwal Sir':   {total:99, pwP:62,edP:27,totP:89, pwW:3, edW:7, totW:10},
+  'Prashant Soni → Abhishek Sir':{total:36,pwP:5,edP:19,totP:24,pwW:0,edW:12,totW:12},
+  'Manish Kumar Sir':    {total:79, pwP:35,edP:34,totP:69, pwW:3, edW:7, totW:10},
+  'Offline Sir (Pathshala)':{total:21,pwP:7,edP:2,totP:9,pwW:0,edW:12,totW:12},
+  'Ankit Kohli Sir (Power Batch)':{total:3,pwP:1,edP:0,totP:1,pwW:2,edW:0,totW:2},
+  'Mohammed Saad Salmaan Sir':{total:6,pwP:1,edP:0,totP:1,pwW:1,edW:4,totW:5},
+};
+
+const LEADER_NAMES=Object.keys(LEADERS_CFG);
+
+const CITY_DATA=[
+  {city:'Delhi',total:58,pwP:30,edP:19,wip:6,pending:3},
+  {city:'Mumbai',total:42,pwP:20,edP:16,wip:4,pending:2},
+  {city:'Lucknow',total:38,pwP:18,edP:13,wip:5,pending:2},
+  {city:'Patna',total:31,pwP:15,edP:9,wip:5,pending:2},
+  {city:'Pune',total:27,pwP:12,edP:10,wip:3,pending:2},
+  {city:'Chennai',total:24,pwP:10,edP:10,wip:3,pending:1},
+  {city:'Hyderabad',total:22,pwP:9,edP:9,wip:3,pending:1},
+  {city:'Jaipur',total:20,pwP:8,edP:8,wip:3,pending:1},
+  {city:'Kolkata',total:19,pwP:7,edP:8,wip:3,pending:1},
+  {city:'Bhopal',total:17,pwP:6,edP:7,wip:3,pending:1},
+  {city:'Chandigarh',total:14,pwP:5,edP:6,wip:2,pending:1},
+  {city:'Ahmedabad',total:12,pwP:5,edP:5,wip:2,pending:0},
+  {city:'Nagpur',total:10,pwP:4,edP:4,wip:1,pending:1},
+  {city:'Remote',total:7,pwP:2,edP:3,wip:1,pending:1},
+];
+
+const ISSUE_DATA={
+  this:{ref:23, frame:19, video:15, audio:14, avs:10},
+  last:{ref:18, frame:15, video:12, audio:11, avs:8 },
+  w2:  {ref:21, frame:17, video:13, audio:12, avs:9 },
+};
+
+let PENDING_APPROVALS=[
+  {id:101,name:'Deepak Yadav',leader:'Prashant Soni → Abhishek Sir',category:'Banking',city:'Patna',ownership:'educator',videoLink:'https://drive.google.com/file/sample1',frame:'Pass',reflection:'Fail',light:'Pass',audio:'Review',avSync:'Pass',bg:'Pass',submitted:'2026-04-25'},
+  {id:102,name:'Nisha Agarwal',leader:'Rajat Agarwal Sir',category:'UPSC',city:'Lucknow',ownership:'educator',videoLink:'https://drive.google.com/file/sample2',frame:'Pass',reflection:'Pass',light:'Pass',audio:'Pass',avSync:'Pass',bg:'Pass',submitted:'2026-04-26'},
+  {id:103,name:'Arjun Mehta',leader:'Sanyam Jain Sir',category:'IIT-JEE',city:'Delhi',ownership:'pw',videoLink:'https://drive.google.com/file/sample3',frame:'Review',reflection:'Pass',light:'Fail',audio:'Pass',avSync:'Pass',bg:'Pass',submitted:'2026-04-26'},
+];
+
+// ── GOOGLE SHEET CONFIG ──────────────────────────────────────────
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzNDfSFU3HJfxtoduIygt1uDQndwTLOTrnV9dKbOrc7rmhhr9lz3KU5Tc45w3bBpQVydA/exec";
+
+function applySheetData(data){
+  const nameMap = {
+    'sanyam jain':               'Sanyam Jain Sir',
+    'rajat agarwal':             'Rajat Agarwal Sir',
+    'prashant soni':             'Prashant Soni → Abhishek Sir',
+    'manish kumar':              'Manish Kumar Sir',
+    'offline (pathshala)':       'Offline Sir (Pathshala)',
+    'offline':                   'Offline Sir (Pathshala)',
+    'ankit kohli (power batch)': 'Ankit Kohli Sir (Power Batch)',
+    'mohammed saad salmaan':     'Mohammed Saad Salmaan Sir',
+  };
+
+  // ── Leader Rows (A4:H10) ──
+  const leaderRows = data.leaderRows || [];
+  leaderRows.forEach(r => {
+    const rawName = String(r[0]||'').trim();
+    const lower   = rawName.toLowerCase();
+    let dashName  = null;
+    for(const [key,val] of Object.entries(nameMap)){
+      if(lower.includes(key)){ dashName=val; break; }
+    }
+    if(!dashName) return;
+    LEADER_WEEK[dashName]  = {total:parseInt(r[1])||0,pwP:parseInt(r[2])||0,edP:parseInt(r[3])||0,totP:parseInt(r[4])||0,pwW:parseInt(r[5])||0,edW:parseInt(r[6])||0,totW:parseInt(r[7])||0};
+    LEADER_MONTH[dashName] = {...LEADER_WEEK[dashName]};
+  });
+
+  // ── Total Row (A11) ──
+  const tr = data.totalRow || [];
+  const grandTotal   = parseInt(tr[1])||371;
+  const totalQuality = parseInt(tr[4])||310;
+  const totalWip     = parseInt(tr[7])||50;
+  const qualityPct   = Math.round(totalQuality/grandTotal*100);
+  const wipPct       = Math.round(totalWip/grandTotal*100);
+  document.querySelectorAll('#sb-total').forEach(el=>el.textContent=grandTotal);
+  const e1=document.getElementById('kpi-total-studios'); if(e1) e1.textContent=grandTotal;
+  const e2=document.getElementById('kpi-quality');       if(e2) e2.textContent=totalQuality;
+  const e3=document.getElementById('kpi-quality-sub');   if(e3) e3.textContent=qualityPct+'% of total';
+  const e4=document.getElementById('kpi-wip');           if(e4) e4.textContent=totalWip;
+  const e5=document.getElementById('kpi-wip-sub');       if(e5) e5.textContent=wipPct+'% of total';
+  document.querySelectorAll('button.ot').forEach(b=>{ if(b.textContent.includes('All (')) b.textContent='🌐 All ('+grandTotal+')'; });
+  const e6=document.getElementById('total-studios-sub'); if(e6) e6.textContent=grandTotal;
+  window.GRAND_TOTAL = grandTotal;
+
+  // ── Weekly Rows (A17:M24) ──
+  const WKEYS=['w6','w7','w8','w9','w10','w11','w12','w13','w14','w15','w16','w17'];
+  (data.weeklyRows||[]).forEach(r=>{
+    const lower=String(r[0]||'').trim().toLowerCase();
+    let dashName=null;
+    for(const [key,val] of Object.entries(nameMap)){ if(lower.includes(key)){dashName=val;break;} }
+    if(!dashName) return;
+    const wo={}; WKEYS.forEach((wk,i)=>{ wo[wk]=parseInt(r[i+1])||0; });
+    if(LEADER_WEEK[dashName]) LEADER_WEEK[dashName].weekData=wo;
+  });
+
+  if(data.weekQuality && data.weekQuality.length) window.SHEET_WEEK_QUALITY=data.weekQuality;
+
+  showToast('✅ Sheet ka live data load ho gaya! 📊','green');
+  if(typeof buildLeaderSummaryTable==='function') buildLeaderSummaryTable();
+  if(typeof animKPIs==='function') animKPIs();
+}
+
+function loadFromSheet(){
+  const loader=document.getElementById('sheet-loader');
+  if(loader) loader.style.display='flex';
+
+  const old=document.getElementById('__ss'); if(old) old.remove();
+
+  window._sheetCB=function(data){
+    try{
+      applySheetData(data);
+      showToast('✅ Sheet ka live data load ho gaya! 📊','green');
+    } catch(e){
+      console.error('Parse error:',e);
+      showToast('⚠️ Data parse error: '+e.message,'red');
+    }
+    if(loader) loader.style.display='none';
+    nav('dashboard');
+  };
+
+  const s=document.createElement('script');
+  s.id='__ss';
+  s.src=SHEET_URL+'?callback=_sheetCB&t='+Date.now();
+  s.onerror=function(){
+    console.error('JSONP failed');
+    if(loader) loader.style.display='none';
+    showToast('⚠️ Sheet load nahi hua — sample data dikh raha hai','red');
+    nav('dashboard');
+  };
+  document.head.appendChild(s);
+}
+function saveToSheet(entry){
+  fetch(SHEET_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'text/plain'},
+    body: JSON.stringify({
+      faculty:     entry.name,
+      leader:      entry.leader,
+      category:    entry.category,
+      city:        entry.city,
+      ownership:   entry.ownership,
+      auditor:     entry.auditor,
+      auditType:   entry.auditType,
+      date:        entry.date,
+      status:      entry.finalStatus,
+      videoLink:   entry.videoLink,
+      remark:      entry.remark,
+      frame:       entry.frame,
+      reflection:  entry.reflection,
+      lighting:    entry.light,
+      audio:       entry.audio,
+      avSync:      entry.avSync,
+      board:       entry.board,
+      irf:         entry.irf,
+      finalStatus: entry.finalStatus,
+    })
+  })
+  .then(r => r.json())
+  .then(() => showToast('✅ Sheet mein bhi save ho gaya!','green'))
+  .catch(() => showToast('⚠️ Sheet save failed — dashboard pe save hua','red'));
+}
+// ─────────────────────────────────────────────────────────────────
+
+let STUDIOS=[
+  {id:1,name:'Rahul Sharma',leader:'Sanyam Jain Sir',category:'IIT-JEE',city:'Delhi',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample1',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Vinay Pal',auditType:'Virtual',date:'2026-04-21'},
+  {id:2,name:'Anjali Singh',leader:'Rajat Agarwal Sir',category:'UPSC',city:'Lucknow',ownership:'educator',status:'wip',videoLink:'https://drive.google.com/sample2',frame:'Minor Cut',reflection:'Fail - Heavy Reflection',audio:'Perfect',light:'Too Dark',avSync:'Perfect',board:'Partially Visible',irf:'Yes',finalStatus:'Not Perfect',auditor:'Ajit Bala',auditType:'Home Visit',date:'2026-04-22'},
+  {id:3,name:'Sanjay Mehta',leader:'Manish Kumar Sir',category:'CA',city:'Mumbai',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample3',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Vishnu Pandey',auditType:'Virtual',date:'2026-04-23'},
+  {id:4,name:'Kavya Nair',leader:'Sanyam Jain Sir',category:'NEET',city:'Chennai',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample4',frame:'Perfect',reflection:'Minor Reflection',audio:'Low Volume',light:'Perfect',avSync:'Slight Delay',board:'Perfect',irf:'Yes',finalStatus:'Not Perfect',auditor:'Kapil Sharma',auditType:'Virtual',date:'2026-04-24'},
+  {id:5,name:'Amit Joshi',leader:'Rajat Agarwal Sir',category:'GATE',city:'Pune',ownership:'educator',status:'wip',videoLink:'',frame:'Zoom Issue',reflection:'Perfect',audio:'Echo',light:'Perfect',avSync:'Perfect',board:'Blurry Text',irf:'Yes',finalStatus:'Not Perfect',auditor:'Abhimanyu Singh',auditType:'Home Visit',date:'2026-04-19'},
+  {id:6,name:'Priya Verma',leader:'Sanyam Jain Sir',category:'Foundation',city:'Delhi',ownership:'educator',status:'perfect',videoLink:'https://drive.google.com/sample6',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Vinay Pal',auditType:'Virtual',date:'2026-04-20'},
+  {id:7,name:'Rohit Gupta',leader:'Rajat Agarwal Sir',category:'BPSC',city:'Patna',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample7',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Ajit Bala',auditType:'Virtual',date:'2026-04-21'},
+  {id:8,name:'Sneha Pandey',leader:'Manish Kumar Sir',category:'CS',city:'Mumbai',ownership:'educator',status:'wip',videoLink:'https://drive.google.com/sample8',frame:'Off-Center',reflection:'Screen Glare',audio:'Background Noise',light:'Too Bright',avSync:'Perfect',board:'Perfect',irf:'Yes',finalStatus:'Not Perfect',auditor:'Vishnu Pandey',auditType:'Home Visit',date:'2026-04-22'},
+  {id:9,name:'Arjun Tiwari',leader:'Sanyam Jain Sir',category:'IIT-JEE',city:'Jaipur',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample9',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Kapil Sharma',auditType:'Virtual',date:'2026-04-23'},
+  {id:10,name:'Meera Iyer',leader:'Sanyam Jain Sir',category:'NEET',city:'Chennai',ownership:'educator',status:'perfect',videoLink:'https://drive.google.com/sample10',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Abhimanyu Singh',auditType:'Virtual',date:'2026-04-24'},
+  {id:11,name:'Vikram Singh',leader:'Rajat Agarwal Sir',category:'UPSC',city:'Delhi',ownership:'pw',status:'wip',videoLink:'https://drive.google.com/sample11',frame:'Head Cut',reflection:'Fail - Distracting Glare',audio:'Perfect',light:'Shadow on Face',avSync:'Slight Delay',board:'Partially Visible',irf:'Yes',finalStatus:'Not Perfect',auditor:'Vinay Pal',auditType:'Home Visit',date:'2026-04-20'},
+  {id:12,name:'Pooja Sharma',leader:'Manish Kumar Sir',category:'ACCA',city:'Ahmedabad',ownership:'educator',status:'perfect',videoLink:'https://drive.google.com/sample12',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Ajit Bala',auditType:'Virtual',date:'2026-04-21'},
+  {id:13,name:'Karan Malhotra',leader:'Sanyam Jain Sir',category:'Gurukul',city:'Lucknow',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample13',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Vishnu Pandey',auditType:'Virtual',date:'2026-04-22'},
+  {id:14,name:'Divya Rao',leader:'Rajat Agarwal Sir',category:'MPSC',city:'Pune',ownership:'educator',status:'wip',videoLink:'https://drive.google.com/sample14',frame:'Zoom Issue',reflection:'Perfect',audio:'Mic Distortion',light:'Uneven Lighting',avSync:'Perfect',board:'Blurry Text',irf:'Yes',finalStatus:'Not Perfect',auditor:'Kapil Sharma',auditType:'Home Visit',date:'2026-04-23'},
+  {id:15,name:'Aakash Dubey',leader:'Manish Kumar Sir',category:'UGC NET',city:'Bhopal',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample15',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Abhimanyu Singh',auditType:'Virtual',date:'2026-04-24'},
+  {id:16,name:'Ritu Agarwal',leader:'Sanyam Jain Sir',category:'CUET UG',city:'Delhi',ownership:'educator',status:'perfect',videoLink:'https://drive.google.com/sample16',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Sanjay Yadav',auditType:'Virtual',date:'2026-04-19'},
+  {id:17,name:'Nikhil Bansal',leader:'Rajat Agarwal Sir',category:'Banking',city:'Kolkata',ownership:'pw',status:'wip',videoLink:'https://drive.google.com/sample17',frame:'Minor Cut',reflection:'Glasses Reflection',audio:'Echo',light:'Too Dark',avSync:'Audio Ahead',board:'Small Font',irf:'Yes',finalStatus:'Not Perfect',auditor:'Vinay Pal',auditType:'Home Visit',date:'2026-04-20'},
+  {id:18,name:'Simran Kaur',leader:'Manish Kumar Sir',category:'MBA',city:'Chandigarh',ownership:'educator',status:'perfect',videoLink:'https://drive.google.com/sample18',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Ajit Bala',auditType:'Virtual',date:'2026-04-21'},
+  {id:19,name:'Tarun Yadav',leader:'Sanyam Jain Sir',category:'NDA',city:'Jaipur',ownership:'pw',status:'perfect',videoLink:'https://drive.google.com/sample19',frame:'Perfect',reflection:'Perfect',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Vishnu Pandey',auditType:'Virtual',date:'2026-04-22'},
+  {id:20,name:'Ananya Mishra',leader:'Rajat Agarwal Sir',category:'UPPSC',city:'Lucknow',ownership:'educator',status:'perfect',videoLink:'https://drive.google.com/sample20',frame:'Perfect',reflection:'Minor Reflection',audio:'Perfect',light:'Perfect',avSync:'Perfect',board:'Perfect',irf:'No',finalStatus:'Perfect Studio',auditor:'Kapil Sharma',auditType:'Virtual',date:'2026-04-23'},
+];
+let nextId=6, ownerTabFilter='all';
+const auditQ={};
+
+// ═══ CHART HELPERS ═══
+const C={};
+function dc(k){if(C[k]){C[k].destroy();delete C[k];}}
+const baseOpts={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:'#94a3b8',font:{size:10,family:'DM Sans'},boxWidth:10,padding:10}}},
+  scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'rgba(255,255,255,0.025)'}},y:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true}}
+};
+const noScales={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+
+// ═══ DASHBOARD ═══
+function buildTrend(){
+  dc('trend');
+  C['trend']=new Chart(document.getElementById('trendChart'),{
+    type:'bar',
+    data:{labels:WL,datasets:[{label:'Audits Done',data:WEEKS.map(w=>WEEK_DATA[w].audits),backgroundColor:['rgba(79,110,247,0.6)','rgba(79,110,247,0.6)','rgba(79,110,247,0.6)','rgba(245,158,11,0.7)','rgba(16,185,129,0.75)'],borderRadius:5}]},
+    options:{...baseOpts,plugins:{legend:{display:false},tooltip:{callbacks:{afterBody:(items)=>{const w=WEEKS[items[0].dataIndex];const d=WEEK_DATA[w];return[`Improved: ${d.perfect}`,`WIP: ${d.wip}`];}}}}}
+  });
+}
+
+function buildOwnershipDonuts(){
+  dc('ed');
+  const edV=[167,36],edC=['#10b981','#f59e0b'],edL=['Quality Improved','WIP'];
+  C['ed']=new Chart(document.getElementById('edChart'),{type:'doughnut',data:{labels:edL,datasets:[{data:edV,backgroundColor:edC,borderWidth:2,borderColor:'#0d1526',hoverOffset:4}]},options:{...noScales,cutout:'68%'}});
+  const tot=edV.reduce((a,b)=>a+b,0);
+  document.getElementById('edLegend').innerHTML=edL.map((l,i)=>`<div class="dl-item"><div class="dl-dot" style="background:${edC[i]}"></div><div class="dl-label">${l}</div><div class="dl-val" style="color:${edC[i]}">${edV[i]}</div><div class="dl-pct">(${Math.round(edV[i]/tot*100)}%)</div></div>`).join('');
+  dc('pw');
+  const pwV=[138,20],pwC=['#3b82f6','#f59e0b'],pwL=['Quality Improved','WIP'];
+  C['pw']=new Chart(document.getElementById('pwChart'),{type:'doughnut',data:{labels:pwL,datasets:[{data:pwV,backgroundColor:pwC,borderWidth:2,borderColor:'#0d1526',hoverOffset:4}]},options:{...noScales,cutout:'68%'}});
+  const tot2=pwV.reduce((a,b)=>a+b,0);
+  document.getElementById('pwLegend').innerHTML=pwL.map((l,i)=>`<div class="dl-item"><div class="dl-dot" style="background:${pwC[i]}"></div><div class="dl-label">${l}</div><div class="dl-val" style="color:${pwC[i]}">${pwV[i]}</div><div class="dl-pct">(${Math.round(pwV[i]/tot2*100)}%)</div></div>`).join('');
+}
+
+function buildDashIssues(){
+  dc('issueBar');
+  C['issueBar']=new Chart(document.getElementById('issueBarChart'),{
+    type:'bar',
+    data:{
+      labels:['Reflection','Camera Frame','Video Quality','Audio Quality','AV Sync'],
+      datasets:[{label:'Issues',data:[23,19,15,14,10],backgroundColor:['#ef4444','#3b82f6','#f59e0b','#f97316','#8b5cf6'],borderRadius:5,borderSkipped:false}]
+    },
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(i)=>`  Issues: ${i.raw}`}}},
+      scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true},y:{ticks:{color:'#94a3b8',font:{size:10.5}},grid:{display:false}}}
+    }
+  });
+}
+
+function buildNewStudios(){
+  dc('newS');
+  C['newS']=new Chart(document.getElementById('newStudiosChart'),{
+    type:'bar',
+    data:{labels:WL,datasets:[
+      {label:'IIT-JEE / NEET',data:WEEKS.map(w=>WEEK_DATA[w].jee),backgroundColor:'rgba(123,147,255,0.8)',borderRadius:4},
+      {label:'UPSC / State',  data:WEEKS.map(w=>WEEK_DATA[w].upsc),backgroundColor:'rgba(16,185,129,0.8)',borderRadius:4},
+      {label:'Banking / SSC', data:WEEKS.map(w=>WEEK_DATA[w].banking),backgroundColor:'rgba(239,68,68,0.75)',borderRadius:4},
+      {label:'CA / Commerce', data:WEEKS.map(w=>WEEK_DATA[w].ca),backgroundColor:'rgba(139,92,246,0.75)',borderRadius:4},
+    ]},
+    options:{...baseOpts,scales:{x:{stacked:true,ticks:{color:'#64748b'},grid:{display:false}},y:{stacked:true,ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true}}}
+  });
+}
+
+let ldrPeriod='week';
+function switchLdrPeriod(p,btn){
+  ldrPeriod=p;
+  document.getElementById('ldrWkBtn').classList.toggle('active',p==='week');
+  document.getElementById('ldrMoBtn').classList.toggle('active',p==='month');
+  buildLeaderSummaryTable();
+}
+
+function buildLeaderSummaryTable(){
+  const src=ldrPeriod==='week'?LEADER_WEEK:LEADER_MONTH;
+  const td=(val,color,bold)=>`<td style="padding:9px 12px;border:1px solid var(--border);text-align:center;font-family:var(--mono);font-size:13px;color:${color};font-weight:${bold?700:400};">${val}</td>`;
+  // totals
+  const totW={pwP:0,edP:0,totP:0,pwW:0,edW:0,totW:0,total:window.GRAND_TOTAL||371};
+  LEADER_NAMES.forEach(n=>{const d=src[n];if(d){totW.pwP+=d.pwP;totW.edP+=d.edP;totW.totP+=d.totP;totW.pwW+=d.pwW;totW.edW+=d.edW;totW.totW+=d.totW;}});
+  document.getElementById('leaderSummaryBody').innerHTML=
+    LEADER_NAMES.map(n=>{
+      const d=src[n]||{total:0,pwP:0,edP:0,totP:0,pwW:0,edW:0,totW:0};
+      const c=(LEADERS_CFG[n]||{color:'#94a3b8'}).color;
+      const pct=d.total?Math.round(d.totP/d.total*100):0;
+      return `<tr>
+        <td style="padding:9px 12px;border:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:7px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0;"></div>
+            <span style="font-size:13px;font-weight:700;color:#fff;">${n}</span>
+          </div>
+        </td>
+        ${td(d.total,'var(--cyan)',true)}
+        ${td(d.pwP,'var(--blue)',false)}
+        ${td(d.edP,'var(--blue)',false)}
+        <td style="padding:9px 12px;border:1px solid var(--border);text-align:center;font-family:var(--mono);font-size:13px;color:var(--green);font-weight:700;">${d.totP} <span style="font-size:11px;color:var(--muted);font-weight:400;">(${pct}%)</span></td>
+        ${td(d.pwW,'var(--gold)',false)}
+        ${td(d.edW,'var(--gold)',false)}
+        ${td(d.totW,'var(--gold)',true)}
+      </tr>`;
+    }).join('')+
+    `<tr class="tot-row">
+      <td style="padding:9px 12px;border:1px solid var(--border);font-size:13px;font-weight:800;color:#fff;">Total</td>
+      ${td(window.GRAND_TOTAL||371,'var(--cyan)',true)}
+      ${td(totW.pwP,'var(--blue)',true)}
+      ${td(totW.edP,'var(--blue)',true)}
+      <td style="padding:9px 12px;border:1px solid var(--border);text-align:center;font-family:var(--mono);font-size:13px;color:var(--green);font-weight:800;">${totW.totP} <span style="font-size:11px;color:var(--muted);">(${Math.round(totW.totP/(window.GRAND_TOTAL||371)*100)}%)</span></td>
+      ${td(totW.pwW,'var(--gold)',true)}
+      ${td(totW.edW,'var(--gold)',true)}
+      ${td(totW.totW,'var(--gold)',true)}
+    </tr>`;
+}
+
+function animKPIs(){
+  setTimeout(()=>{
+    document.getElementById('kf1').style.width='100%';
+    document.getElementById('kf2').style.width='82%';
+    document.getElementById('kf3').style.width='15%';
+    document.getElementById('kf4').style.width='55%';
+    document.getElementById('kf5').style.width='30%';
+    document.getElementById('kf6').style.width='18%';
+  },300);
+}
+
+// ═══ WEEKLY ═══
+function switchRptPeriod(){
+  const v=document.getElementById('rptPeriodSel').value;
+  document.getElementById('rpt-weekly-view').style.display=v==='weekly'?'block':'none';
+  document.getElementById('rpt-monthly-view').style.display=v==='monthly'?'block':'none';
+  document.getElementById('rpt-yearly-view').style.display=v==='yearly'?'block':'none';
+  const titles={weekly:'Weekly <span>Report</span>',monthly:'Monthly <span>Report</span>',yearly:'Yearly <span>Report</span>'};
+  const subs={weekly:'Select two weeks to compare side-by-side',monthly:'Month-wise studio quality overview',yearly:'Full year — month by month breakdown'};
+  document.getElementById('wkPageTitle').innerHTML=titles[v];
+  document.getElementById('wkPageSub').textContent=subs[v];
+  if(v==='weekly'){buildWeekCompare();buildWeekTable();buildWeeklyLeaderChart();buildStatusHist();}
+  if(v==='monthly') buildMonthlyView();
+  if(v==='yearly') buildYearlyView();
+}
+
+function buildWeekCompare(){
+  const wkA=document.getElementById('wkCmpA')?document.getElementById('wkCmpA').value:'w17';
+  const wkB=document.getElementById('wkCmpB')?document.getElementById('wkCmpB').value:'w18';
+  const dA=WEEK_DATA[wkA],dB=WEEK_DATA[wkB];
+  // Update card headers
+  const wkLabels={w14:'Week 14',w15:'Week 15',w16:'Week 16',w17:'Week 17',w18:'Week 18'};
+  const wkDates={w14:'Mar 24–30',w15:'Mar 31–Apr 6',w16:'Apr 7–13',w17:'Apr 14–20',w18:'Apr 21–26'};
+  document.getElementById('wkCardTitleA').innerHTML=`📅 ${wkLabels[wkA]} <span class="wk-tag prev">${wkDates[wkA]}</span>`;
+  document.getElementById('wkCardTitleB').innerHTML=`📅 ${wkLabels[wkB]} <span class="wk-tag curr">${wkDates[wkB]}</span>`;
+  const metrics=[
+    {label:'Total Studios',   keyA:dA.total,   keyB:dB.total,   pos:true},
+    {label:'Audits Done',     keyA:dA.audits,  keyB:dB.audits,  pos:true},
+    {label:'Quality Improved',keyA:dA.perfect, keyB:dB.perfect, pos:true},
+    {label:'WIP Studios',     keyA:dA.wip,     keyB:dB.wip,     pos:false},
+    {label:'New Added',       keyA:dA.newAdded,keyB:dB.newAdded,pos:true},
+  ];
+  const mkRows=(valA,valB,pos)=>{
+    const diff=valA-valB; const isGood=pos?diff>0:diff<0;
+    const cls=diff===0?'diff-neu':isGood?'diff-up':'diff-dn'; const arrow=diff>0?'↑':diff<0?'↓':'→';
+    return{rowA:`<div class="wk-row"><div class="wk-label">${''}</div><div class="wk-right"><div class="wk-val">${valA}</div><div class="wk-diff ${cls}">${arrow}${Math.abs(diff)}</div></div></div>`,
+           rowB:`<div class="wk-row"><div class="wk-label">${''}</div><div class="wk-right"><div class="wk-val">${valB}</div></div></div>`};
+  };
+  document.getElementById('w17rows').innerHTML=metrics.map(r=>`<div class="wk-row"><div class="wk-label">${r.label}</div><div class="wk-right"><div class="wk-val">${r.keyA}</div>${(()=>{const diff=r.keyA-r.keyB;const isGood=r.pos?diff>0:diff<0;const cls=diff===0?'diff-neu':isGood?'diff-up':'diff-dn';const arrow=diff>0?'↑':diff<0?'↓':'→';return`<div class="wk-diff ${cls}">${arrow}${Math.abs(diff)}</div>`;})()}</div></div>`).join('');
+  document.getElementById('w18rows').innerHTML=metrics.map(r=>`<div class="wk-row"><div class="wk-label">${r.label}</div><div class="wk-right"><div class="wk-val">${r.keyB}</div></div></div>`).join('');
+}
+
+// ── MONTHLY DATA ──
+const MONTH_DATA={
+  jan:{label:'January 2026',  total:298,audits:88, perfect:228,wip:50,newAdded:18,jee:22,upsc:24,banking:21,ca:15,
+       weeks:[{w:'W1',d:'Jan 1–6',   tot:298,aud:18,perf:215,wip:54,new:4},{w:'W2',d:'Jan 7–13', tot:302,aud:21,perf:221,wip:52,new:5},{w:'W3',d:'Jan 14–20',tot:307,aud:24,perf:227,wip:51,new:6},{w:'W4',d:'Jan 21–31',tot:312,aud:25,perf:228,wip:50,new:3}]},
+  feb:{label:'February 2026', total:318,audits:102,perfect:248,wip:47,newAdded:14,jee:26,upsc:28,banking:24,ca:18,
+       weeks:[{w:'W5',d:'Feb 1–7',   tot:312,aud:22,perf:232,wip:48,new:3},{w:'W6',d:'Feb 8–14', tot:317,aud:27,perf:238,wip:47,new:5},{w:'W7',d:'Feb 15–21',tot:321,aud:26,perf:242,wip:47,new:4},{w:'W8',d:'Feb 22–28',tot:325,aud:27,perf:248,wip:47,new:2}]},
+  mar:{label:'March 2026',    total:337,audits:118,perfect:268,wip:45,newAdded:19,jee:30,upsc:32,banking:27,ca:20,
+       weeks:[{w:'W9',d:'Mar 1–7',   tot:325,aud:28,perf:252,wip:46,new:4},{w:'W10',d:'Mar 8–14', tot:329,aud:30,perf:257,wip:46,new:5},{w:'W11',d:'Mar 15–21',tot:333,aud:29,perf:262,wip:45,new:4},{w:'W12',d:'Mar 22–30',tot:337,aud:31,perf:268,wip:45,new:6}]},
+  apr:{label:'April 2026',    total:361,audits:153,perfect:305,wip:56,newAdded:34,jee:40,upsc:45,banking:38,ca:30,
+       weeks:[{w:'W14',d:'Mar 24–30',tot:337,aud:31,perf:250,wip:75,new:4},{w:'W15',d:'Mar 31–Apr 6',tot:345,aud:38,perf:265,wip:68,new:6},{w:'W16',d:'Apr 7–13',tot:358,aud:42,perf:284,wip:62,new:5},{w:'W17',d:'Apr 14–20',tot:363,aud:35,perf:292,wip:60,new:9},{w:'W18',d:'Apr 21–26',tot:361,aud:47,perf:305,wip:56,new:8}]},
+};
+const MONTH_ORDER=['jan','feb','mar','apr'];
+const MONTH_PREV={jan:null,feb:'jan',mar:'feb',apr:'mar'};
+
+function buildMonthlyView(){
+  const sel=document.getElementById('monthSel').value;
+  const curr=MONTH_DATA[sel];
+  const prevKey=MONTH_PREV[sel];
+  const prev=prevKey?MONTH_DATA[prevKey]:null;
+
+  document.getElementById('monthCurrLabel').textContent=curr.label;
+  document.getElementById('monthPrevLabel').textContent=prev?prev.label:'No Previous';
+  document.getElementById('monthTableTitle').textContent=curr.label;
+
+  // KPIs
+  const kpis=[
+    {label:'Total Studios',val:curr.total,sub:`↑ +${curr.newAdded} added`,c:'cyan'},
+    {label:'Audits Done',  val:curr.audits,sub:prev?`vs ${prev.audits} last month`:'',c:'blue'},
+    {label:'Quality Improved',val:curr.perfect,sub:`${Math.round(curr.perfect/curr.total*100)}% of total`,c:'green'},
+    {label:'WIP Studios',  val:curr.wip,  sub:`${Math.round(curr.wip/curr.total*100)}% of total`,c:'gold'},
+    {label:'New Added',    val:curr.newAdded,sub:`This month`,c:'purple'},
+    {label:'JEE / NEET',  val:curr.jee,  sub:`+ UPSC: ${curr.upsc}`,c:'cyan'},
+  ];
+  document.getElementById('monthKpiRow').innerHTML=kpis.map(k=>{
+    const pct=Math.min(100,Math.round(k.val/curr.total*100)||40);
+    return`<div class="kpi c-${k.c}"><div class="kpi-glow"></div>
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+      <div class="kpi-bar"><div class="kpi-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  // Compare cards
+  const metrics=[
+    {label:'Total Studios',   cV:curr.total,   pV:prev?.total},
+    {label:'Audits Done',     cV:curr.audits,  pV:prev?.audits,  pos:true},
+    {label:'Quality Improved',cV:curr.perfect, pV:prev?.perfect, pos:true},
+    {label:'WIP Studios',     cV:curr.wip,     pV:prev?.wip,     pos:false},
+    {label:'New Added',       cV:curr.newAdded,pV:prev?.newAdded,pos:true},
+    {label:'Completion %',    cV:Math.round(curr.perfect/curr.total*100)+'%', pV:prev?Math.round(prev.perfect/prev.total*100)+'%':null},
+  ];
+  document.getElementById('monthCurrRows').innerHTML=metrics.map(r=>{
+    const diff=prev&&typeof r.cV==='number'&&typeof r.pV==='number'?r.cV-r.pV:null;
+    const cls=diff===null||diff===0?'diff-neu':(r.pos!==false?diff>0:diff<0)?'diff-up':'diff-dn';
+    const arrow=diff===null?'':diff>0?'↑':diff<0?'↓':'→';
+    return`<div class="wk-row"><div class="wk-label">${r.label}</div><div class="wk-right"><div class="wk-val">${r.cV}</div>${diff!==null?`<div class="wk-diff ${cls}">${arrow}${Math.abs(diff)}</div>`:''}</div></div>`;
+  }).join('');
+  document.getElementById('monthPrevRows').innerHTML=metrics.map(r=>`<div class="wk-row"><div class="wk-label">${r.label}</div><div class="wk-right"><div class="wk-val" style="color:var(--muted2)">${r.pV??'—'}</div></div></div>`).join('');
+
+  // Week breakdown table
+  document.getElementById('monthWeekBody').innerHTML=curr.weeks.map((w,i)=>{
+    const pct=Math.round(w.perf/w.tot*100);
+    const isLast=i===curr.weeks.length-1;
+    return`<tr class="${isLast?'curr-row':''}">
+      <td style="font-weight:700;color:#fff">${w.w}${isLast?`<span class="pill pill-purple" style="font-size:8px;margin-left:4px">Latest</span>`:''}</td>
+      <td style="color:var(--muted2)">${w.d}</td>
+      <td style="font-family:var(--mono);color:var(--cyan);text-align:center">${w.tot}</td>
+      <td style="font-family:var(--mono);color:var(--blue);text-align:center">${w.aud}</td>
+      <td style="font-family:var(--mono);color:var(--green);font-weight:700;text-align:center">${w.perf}</td>
+      <td style="font-family:var(--mono);color:var(--gold);text-align:center">${w.wip}</td>
+      <td style="font-family:var(--mono);color:var(--purple);text-align:center">${w.new}</td>
+      <td><div class="city-prog"><div class="city-prog-bar"><div class="city-prog-fill" style="width:${pct}%"></div></div><span style="font-size:10px;color:var(--green);font-weight:700;min-width:32px">${pct}%</span></div></td>
+    </tr>`;
+  }).join('');
+
+  // Monthly trend chart
+  dc('monthTrend');
+  const months=MONTH_ORDER.map(k=>MONTH_DATA[k]);
+  C['monthTrend']=new Chart(document.getElementById('monthTrendChart'),{type:'bar',data:{
+    labels:months.map(m=>m.label.split(' ')[0]),
+    datasets:[
+      {label:'Quality Improved',data:months.map(m=>m.perfect),backgroundColor:'rgba(16,185,129,0.75)',borderRadius:5},
+      {label:'WIP',             data:months.map(m=>m.wip),    backgroundColor:'rgba(245,158,11,0.7)',borderRadius:5},
+      {label:'Audits Done',     data:months.map(m=>m.audits), backgroundColor:'rgba(79,110,247,0.7)', borderRadius:5,type:'line',borderColor:'#7b93ff',pointBackgroundColor:'#7b93ff',fill:false,tension:.4},
+    ]
+  },options:{...baseOpts,scales:{x:{ticks:{color:'#64748b'},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true}}}});
+}
+
+// ── YEARLY DATA ──
+const YEARLY_DATA={
+  2025:{
+    months:[
+      {m:'Jan',tot:180,aud:45,perf:140,wip:28,new:8,jee:12,upsc:13,banking:10,ca:7},
+      {m:'Feb',tot:192,aud:52,perf:150,wip:27,new:10,jee:14,upsc:15,banking:12,ca:8},
+      {m:'Mar',tot:205,aud:60,perf:162,wip:26,new:11,jee:16,upsc:17,banking:13,ca:9},
+      {m:'Apr',tot:218,aud:68,perf:175,wip:25,new:13,jee:18,upsc:19,banking:15,ca:11},
+      {m:'May',tot:230,aud:72,perf:186,wip:24,new:12,jee:19,upsc:20,banking:16,ca:12},
+      {m:'Jun',tot:241,aud:65,perf:195,wip:23,new:9,jee:17,upsc:18,banking:14,ca:10},
+      {m:'Jul',tot:252,aud:70,perf:204,wip:22,new:11,jee:18,upsc:19,banking:15,ca:11},
+      {m:'Aug',tot:261,aud:74,perf:212,wip:22,new:9,jee:19,upsc:20,banking:16,ca:12},
+      {m:'Sep',tot:269,aud:78,perf:219,wip:23,new:8,jee:20,upsc:21,banking:17,ca:12},
+      {m:'Oct',tot:276,aud:82,perf:224,wip:24,new:7,jee:21,upsc:22,banking:17,ca:13},
+      {m:'Nov',tot:283,aud:85,perf:229,wip:25,new:7,jee:22,upsc:23,banking:18,ca:13},
+      {m:'Dec',tot:290,aud:90,perf:234,wip:27,new:7,jee:22,upsc:23,banking:18,ca:14},
+    ]
+  },
+  2026:{
+    months:[
+      {m:'Jan',tot:298,aud:88, perf:228,wip:50,new:18,jee:22,upsc:24,banking:21,ca:15},
+      {m:'Feb',tot:318,aud:102,perf:248,wip:47,new:14,jee:26,upsc:28,banking:24,ca:18},
+      {m:'Mar',tot:337,aud:118,perf:268,wip:45,new:19,jee:30,upsc:32,banking:27,ca:20},
+      {m:'Apr',tot:361,aud:153,perf:305,wip:56,new:34,jee:40,upsc:45,banking:38,ca:30},
+      {m:'May',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+      {m:'Jun',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+      {m:'Jul',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+      {m:'Aug',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+      {m:'Sep',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+      {m:'Oct',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+      {m:'Nov',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+      {m:'Dec',tot:null,aud:null,perf:null,wip:null,new:null,jee:null,upsc:null,banking:null,ca:null},
+    ]
+  }
+};
+
+function buildYearlyView(){
+  const yr=parseInt(document.getElementById('yearSel').value);
+  const data=YEARLY_DATA[yr];
+  document.getElementById('yearTableTitle').textContent=yr;
+
+  const filled=data.months.filter(m=>m.tot!==null);
+  const totAudit=filled.reduce((s,m)=>s+m.aud,0);
+  const totNew=filled.reduce((s,m)=>s+m.new,0);
+  const latestPerf=filled[filled.length-1]?.perf||0;
+  const latestTotal=filled[filled.length-1]?.tot||1;
+
+  // KPIs
+  document.getElementById('yearKpiRow').innerHTML=[
+    {label:'Total Studios (Latest)',val:filled[filled.length-1]?.tot||'—',sub:`As of ${filled[filled.length-1]?.m} ${yr}`,c:'cyan'},
+    {label:'Total Audits (YTD)',    val:totAudit, sub:`Across ${filled.length} months`,c:'blue'},
+    {label:'New Studios Added',     val:totNew,   sub:`Year ${yr} total`,c:'purple'},
+    {label:'Completion Rate',       val:Math.round(latestPerf/latestTotal*100)+'%',sub:`Quality Improved %`,c:'green'},
+  ].map(k=>`<div class="kpi c-${k.c}"><div class="kpi-glow"></div>
+    <div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div>
+    <div class="kpi-sub">${k.sub}</div>
+    <div class="kpi-bar"><div class="kpi-fill" style="width:60%"></div></div></div>`).join('');
+
+  // Table
+  document.getElementById('yearTableBody').innerHTML=data.months.map((m,i)=>{
+    const isLast=m.tot&&(i===filled.length-1);
+    const na='<span style="color:var(--muted)">—</span>';
+    const pct=m.tot?Math.round(m.perf/m.tot*100)+'%':null;
+    return`<tr class="${isLast?'curr-row':''}">
+      <td style="font-weight:700;color:${m.tot?'#fff':'var(--muted)'}">${m.m} ${yr}${isLast?`<span class="pill pill-purple" style="font-size:8px;margin-left:4px">Latest</span>`:''}</td>
+      <td style="font-family:var(--mono);color:var(--cyan);text-align:center">${m.tot??na}</td>
+      <td style="font-family:var(--mono);color:var(--blue);text-align:center">${m.aud??na}</td>
+      <td style="font-family:var(--mono);color:var(--green);font-weight:700;text-align:center">${m.perf??na}</td>
+      <td style="font-family:var(--mono);color:var(--gold);text-align:center">${m.wip??na}</td>
+      <td style="font-family:var(--mono);color:var(--purple);text-align:center">${m.new??na}</td>
+      <td style="font-family:var(--mono);color:#7b93ff;text-align:center">${m.jee??na}</td>
+      <td style="font-family:var(--mono);color:#10b981;text-align:center">${m.upsc??na}</td>
+      <td style="font-family:var(--mono);color:#ef4444;text-align:center">${m.banking??na}</td>
+      <td style="font-family:var(--mono);color:#8b5cf6;text-align:center">${m.ca??na}</td>
+      <td>${pct?`<div class="city-prog"><div class="city-prog-bar"><div class="city-prog-fill" style="width:${pct}"></div></div><span style="font-size:10px;color:var(--green);font-weight:700;min-width:32px">${pct}</span></div>`:na}</td>
+    </tr>`;
+  }).join('');
+
+  // Audit chart
+  dc('yearAudit');
+  C['yearAudit']=new Chart(document.getElementById('yearAuditChart'),{type:'bar',data:{
+    labels:data.months.map(m=>m.m),
+    datasets:[{label:'Audits Done',data:data.months.map(m=>m.aud),backgroundColor:data.months.map(m=>m.aud?'rgba(79,110,247,0.75)':'rgba(79,110,247,0.1)'),borderRadius:5}]
+  },options:{...baseOpts,plugins:{legend:{display:false}}}});
+
+  // Status chart
+  dc('yearStatus');
+  C['yearStatus']=new Chart(document.getElementById('yearStatusChart'),{type:'line',data:{
+    labels:data.months.map(m=>m.m),
+    datasets:[
+      {label:'Quality Improved',data:data.months.map(m=>m.perf),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.06)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#10b981'},
+      {label:'WIP',             data:data.months.map(m=>m.wip), borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.04)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#f59e0b'},
+    ]
+  },options:{...baseOpts}});
+}
+
+function buildWeekTable(){
+  document.getElementById('weekTableBody').innerHTML=WEEKS.map((w,i)=>{
+    const d=WEEK_DATA[w]; const isThis=w==='w18';
+    const prevA=i>0?WEEK_DATA[WEEKS[i-1]].audits:null;
+    const diffA=prevA!==null?d.audits-prevA:0;
+    const pct=Math.round(d.perfect/d.total*100);
+    const badge=isThis?`<span class="pill pill-purple" style="font-size:8px;margin-left:4px">Current</span>`:'';
+    return `<tr class="${isThis?'curr-row':''}">
+      <td>${d.label} <span style="font-size:9px;color:var(--muted)">${d.dates}</span>${badge}</td>
+      <td style="color:var(--cyan)">${d.total}</td>
+      <td style="color:var(--blue)">${d.audits}${diffA?`<span style="font-size:9px;color:${diffA>0?'var(--green)':'var(--red)'}"> ${diffA>0?'↑':'↓'}${Math.abs(diffA)}</span>`:''}</td>
+      <td style="color:var(--green)">${d.perfect} <span style="font-size:9px;color:var(--muted)">(${pct}%)</span></td>
+      <td style="color:var(--gold)">${d.wip}</td>
+      <td style="color:var(--purple)">${d.newAdded}</td>
+      <td><span style="color:#7b93ff">${d.jee}</span></td>
+      <td><span style="color:#10b981">${d.upsc}</span></td>
+      <td><span style="color:#ef4444">${d.banking}</span></td>
+      <td><span style="color:#8b5cf6">${d.ca}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function buildWeeklyLeaderChart(mode='cat'){
+  dc('wkLdr');
+  const colors=['#7b93ff','#10b981','#ef4444','#8b5cf6','#f59e0b','#06b6d4','#f97316'];
+  let datasets;
+  if(mode==='cat'){
+    const cats=['IIT-JEE/NEET','UPSC/State','Banking/SSC','CA/Commerce'];
+    const cols=['rgba(123,147,255,0.82)','rgba(16,185,129,0.82)','rgba(239,68,68,0.8)','rgba(139,92,246,0.8)'];
+    datasets=cats.map((c,i)=>({label:c,data:WEEKS.map(w=>WEEK_DATA[w][['jee','upsc','banking','ca'][i]]),backgroundColor:cols[i],borderRadius:4}));
+  } else {
+    datasets=LEADER_NAMES.map((n,i)=>({label:n.split(' ')[0],data:WEEKS.map(()=>Math.round((LEADER_WEEK[n]?.totP||0)/5+(Math.random()*3-1))),backgroundColor:colors[i]+'cc',borderRadius:4}));
+  }
+  C['wkLdr']=new Chart(document.getElementById('weeklyLeaderChart'),{type:'bar',data:{labels:WL,datasets},options:{...baseOpts,scales:{x:{stacked:true,ticks:{color:'#64748b'},grid:{display:false}},y:{stacked:true,ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true}}}});
+}
+function switchWeeklyChart(m,b){
+  b.closest('.toggle-group').querySelectorAll('.tog').forEach(t=>t.classList.remove('active'));
+  b.classList.add('active');
+  buildWeeklyLeaderChart(m);
+}
+
+function buildStatusHist(){
+  dc('stHist');
+  C['stHist']=new Chart(document.getElementById('statusHistChart'),{type:'line',data:{labels:WL,datasets:[
+    {label:'Quality Improved',data:WEEKS.map(w=>WEEK_DATA[w].perfect),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.06)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#10b981'},
+    {label:'WIP',data:WEEKS.map(w=>WEEK_DATA[w].wip),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.04)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#f59e0b'},
+    {label:'Total',data:WEEKS.map(w=>WEEK_DATA[w].total),borderColor:'#7b93ff',borderDash:[5,3],tension:.4,pointRadius:3,pointBackgroundColor:'#7b93ff'},
+  ]},options:{...baseOpts}});
+}
+
+// ═══ LEADERS ═══
+function renderLeaders(){
+  document.getElementById('leaderCards').innerHTML=LEADER_NAMES.map(n=>{
+    const cfg=LEADERS_CFG[n]||{color:'#fff',cats:[]};
+    const d=LEADER_WEEK[n]||{total:0,totP:0,totW:0};
+    const pct=d.total?Math.round(d.totP/d.total*100):0;
+    return `<div class="lc" onclick="showLdrDetail('${n.replace(/'/g,"\\'")}')">
+      <div class="lc-top">
+        <div class="lc-av" style="background:${cfg.color}22;color:${cfg.color}">${n.charAt(0)}</div>
+        <div><div class="lc-name">${n.length>22?n.slice(0,20)+'…':n}</div><div class="lc-cat">${cfg.cats.slice(0,2).join(' · ')}</div></div>
+      </div>
+      <div class="lc-stats">
+        <div class="lc-stat"><div class="lc-sv" style="color:var(--cyan)">${d.total}</div><div class="lc-sl">Studios</div></div>
+        <div class="lc-stat"><div class="lc-sv" style="color:var(--green)">${d.totP}</div><div class="lc-sl">Improved</div></div>
+        <div class="lc-stat"><div class="lc-sv" style="color:var(--gold)">${d.totW}</div><div class="lc-sl">WIP</div></div>
+      </div>
+      <div class="lc-bar"><div class="lc-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function showLdrDetail(name){
+  document.getElementById('leaderDetail').style.display='block';
+  document.getElementById('ldTitle').textContent=name+' — Studio Detail';
+  document.getElementById('ldSub').textContent='All audited studios under this leader';
+  const studios=STUDIOS.filter(s=>s.leader===name);
+  const q=(v)=>v==='Pass'?'<span style="color:var(--green)">✅</span>':v==='Fail'?'<span style="color:var(--red)">❌</span>':'<span style="color:var(--gold)">🔄</span>';
+  document.getElementById('ldStudioBody').innerHTML=studios.length?studios.map(s=>`<tr>
+    <td style="font-weight:600">${s.name}</td>
+    <td><span class="pill pill-purple">${s.category}</span></td>
+    <td style="color:var(--muted2)">${s.city}</td>
+    <td>${s.ownership==='pw'?'🏢 PW':'🧑‍🏫 Educator'}</td>
+    <td><span class="pill ${s.status==='perfect'?'pill-green':s.status==='wip'?'pill-gold':'pill-muted'}">${s.status==='perfect'?'✅ Improved':s.status==='wip'?'🔄 WIP':'⏳ Pending'}</span></td>
+    <td>${q(s.reflection)}</td><td>${q(s.audio)}</td><td>${q(s.light)}</td>
+    <td style="color:var(--cyan)">${s.auditor}</td>
+    <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${s.date}</td>
+  </tr>`).join(''):`<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No records yet.</td></tr>`;
+}
+
+// ═══ STUDIOS ═══
+function setOwnerTab(val,btn){
+  ownerTabFilter=val;
+  document.querySelectorAll('.ot').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); filterStudios();
+}
+function populateCityFilter(){
+  const d=document.getElementById('fCity');
+  if(d.options.length<=1) CITY_DATA.forEach(c=>{const o=document.createElement('option');o.value=c.city;o.textContent=c.city;d.appendChild(o);});
+}
+const FRAME_OPTS=['','Perfect','Minor Cut','Zoom Issue','Off-Center','Shaky Frame','Head Cut','Fail - Frame Missing','Fail - Wrong Angle'];
+const REFL_OPTS=['','Perfect','Minor Reflection','Glasses Reflection','Screen Glare','Wall Reflection','Fail - Heavy Reflection','Fail - Distracting Glare'];
+const LIGHT_OPTS=['','Perfect','Too Bright','Too Dark','Uneven Lighting','Shadow on Face','Backlight Issue','Fail - Very Dark','Fail - Overexposed'];
+const AUDIO_OPTS=['','Perfect','Low Volume','Echo','Background Noise','Mic Distortion','Intermittent Audio','Fail - No Audio','Fail - Very Noisy'];
+const AVSYNC_OPTS=['','Perfect','Slight Delay','Audio Ahead','Video Ahead','Fail - Major Desync','Fail - Out of Sync'];
+const BOARD_OPTS=['','Perfect','Partially Visible','Blurry Text','Small Font','Fail - Not Visible','Fail - No Board'];
+const IRF_OPTS=['','No','Yes'];
+const FINAL_OPTS=['','Perfect Studio','Not Perfect'];
+
+const AUDITOR_LIST=['Vinay Pal','Ajit Bala','Vishnu Pandey','Kapil Sharma','Abhimanyu Singh','Sanjay Yadav'];
+const AUDIT_TYPE_OPTS=['Virtual','Home Visit'];
+
+function makeAuditorDrop(sid,val){
+  return`<select onchange="updateStudioParam(${sid},'auditor',this.value)" style="background:var(--bg3);border:1px solid var(--border2);color:var(--cyan);padding:3px 5px;border-radius:5px;font-size:9px;width:100%;min-width:110px;">
+    <option value="">— Select —</option>
+    ${AUDITOR_LIST.map(a=>`<option value="${a}" ${val===a?'selected':''}>${a}</option>`).join('')}
+  </select>`;
+}
+function makeAuditTypeDrop(sid,val){
+  const col=val==='Virtual'?'var(--cyan)':val==='Home Visit'?'var(--orange)':'var(--muted)';
+  return`<select onchange="updateStudioParam(${sid},'auditType',this.value)" style="background:var(--bg3);border:1px solid var(--border2);color:${col};padding:3px 5px;border-radius:5px;font-size:9px;width:100%;min-width:90px;">
+    <option value="">— Select —</option>
+    ${AUDIT_TYPE_OPTS.map(a=>`<option value="${a}" ${val===a?'selected':''}>${a}</option>`).join('')}
+  </select>`;
+}
+function paramColor(v){
+  if(!v||v==='')return'var(--muted)';
+  if(v==='Perfect'||v==='No')return'var(--green)';
+  if(v.startsWith('Fail'))return'var(--red)';
+  return'var(--gold)';
+}
+function makeDrop(sid,field,opts,val){
+  const col=paramColor(val);
+  return`<select onchange="updateStudioParam(${sid},'${field}',this.value)" style="background:var(--bg3);border:1px solid var(--border2);color:${col};padding:3px 5px;border-radius:5px;font-size:9px;width:100%;min-width:110px;">
+    ${opts.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o||'— Select —'}</option>`).join('')}
+  </select>`;
+}
+function updateStudioParam(id,field,val){
+  const s=STUDIOS.find(x=>x.id===id);if(!s)return;
+  s[field]=val;
+  const params=['frame','reflection','light','audio','avSync','board'];
+  const allFilled=params.every(p=>s[p]&&s[p]!=='');
+  if(allFilled){
+    const anyFail=params.some(p=>s[p]&&s[p].startsWith('Fail'));
+    s.finalStatus=anyFail?'Not Perfect':'Perfect Studio';
+  }
+  filterStudios();
+}
+function updateStudioStatus(id,finalStatus){
+  const s=STUDIOS.find(x=>x.id===id);if(!s)return;
+  if(finalStatus==='Perfect Studio'||finalStatus==='Approved — Studio Live') s.status='perfect';
+  else if(finalStatus==='WIP') s.status='wip';
+  else if(finalStatus==='Pending Re-audit') s.status='pending';
+  else s.status='wip';
+  // If approved, push to approval queue for tracking
+  if(finalStatus==='Approved — Studio Live'){
+    const already=PENDING_APPROVALS.find(a=>a.name===s.name&&a.id===s.id);
+    if(!already) PENDING_APPROVALS.push({...s,submitted:new Date().toISOString().split('T')[0]});
+    document.getElementById('pendApprBadge').textContent=PENDING_APPROVALS.length;
+  }
+}
+function filterStudios(){
+  populateCityFilter();
+  const leader=document.getElementById('fLeader').value;
+  const status=document.getElementById('fStatus').value;
+  const city=document.getElementById('fCity').value;
+  const search=document.getElementById('fSearch').value.toLowerCase();
+  const auditor=document.getElementById('fAuditor')?document.getElementById('fAuditor').value:'';
+  const auditType=document.getElementById('fAuditType')?document.getElementById('fAuditType').value:'';
+  let list=STUDIOS.filter(s=>{
+    if(ownerTabFilter!=='all'&&s.ownership!==ownerTabFilter) return false;
+    if(leader&&s.leader!==leader) return false;
+    if(status&&s.status!==status) return false;
+    if(city&&s.city!==city) return false;
+    if(auditor&&s.auditor!==auditor) return false;
+    if(auditType&&s.auditType!==auditType) return false;
+    if(search&&!s.name.toLowerCase().includes(search)&&!s.category.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  document.getElementById('studioCount').textContent=`Showing ${list.length} of ${STUDIOS.length} studios`;
+  const fs=(sid,v)=>{
+    const col=v==='Perfect Studio'?'var(--green)':v==='Approved — Studio Live'?'var(--cyan)':v==='Not Perfect'?'var(--red)':'var(--muted)';
+    return`<select onchange="updateStudioParam(${sid},'finalStatus',this.value);updateStudioStatus(${sid},this.value)" style="background:var(--bg3);border:1px solid var(--border2);color:${col};padding:3px 5px;border-radius:5px;font-size:9px;width:100%;min-width:130px;font-weight:700;">
+      <option value="" ${!v?'selected':''}>— Select —</option>
+      <option value="Perfect Studio" ${v==='Perfect Studio'?'selected':''} style="color:var(--green)">✅ Perfect Studio</option>
+      <option value="Approved — Studio Live" ${v==='Approved — Studio Live'?'selected':''} style="color:var(--cyan)">🚀 Approved — Studio Live</option>
+      <option value="Not Perfect" ${v==='Not Perfect'?'selected':''} style="color:var(--red)">❌ Not Perfect</option>
+      <option value="WIP" ${v==='WIP'?'selected':''} style="color:var(--gold)">🔄 WIP</option>
+      <option value="Pending Re-audit" ${v==='Pending Re-audit'?'selected':''} style="color:var(--orange)">⏳ Pending Re-audit</option>
+    </select>`;
+  };
+  document.getElementById('studioBody').innerHTML=list.length?list.map((s,i)=>`<tr>
+    <td style="color:var(--muted);font-size:10px">${i+1}</td>
+    <td style="font-weight:700;white-space:nowrap;background:rgba(99,102,241,0.06);">${s.name}</td>
+    <td style="font-size:10px;color:${(LEADERS_CFG[s.leader]||{color:'#94a3b8'}).color};background:rgba(99,102,241,0.06);">${s.leader.split(' ')[0]}</td>
+    <td style="background:rgba(99,102,241,0.06);"><span class="pill pill-purple">${s.category}</span></td>
+    <td style="color:var(--muted2);background:rgba(99,102,241,0.06);">${s.city}</td>
+    <td style="background:rgba(99,102,241,0.06);">${s.ownership==='pw'?'<span class="pill pill-blue">🏢 PW</span>':'<span class="pill pill-orange">🧑‍🏫 Ed</span>'}</td>
+    <td style="text-align:center;background:rgba(99,102,241,0.06);">${s.videoLink?`<a href="${s.videoLink}" target="_blank" style="color:var(--accent2);font-size:10px">▶ View</a>`:'<span style="color:var(--muted);font-size:10px">—</span>'}</td>
+    <td style="background:rgba(16,185,129,0.05);">${makeDrop(s.id,'frame',FRAME_OPTS,s.frame||'')}</td>
+    <td style="background:rgba(16,185,129,0.05);">${makeDrop(s.id,'reflection',REFL_OPTS,s.reflection||'')}</td>
+    <td style="background:rgba(16,185,129,0.05);">${makeDrop(s.id,'light',LIGHT_OPTS,s.light||'')}</td>
+    <td style="background:rgba(16,185,129,0.05);">${makeDrop(s.id,'audio',AUDIO_OPTS,s.audio||'')}</td>
+    <td style="background:rgba(16,185,129,0.05);">${makeDrop(s.id,'avSync',AVSYNC_OPTS,s.avSync||'')}</td>
+    <td style="background:rgba(16,185,129,0.05);">${makeDrop(s.id,'board',BOARD_OPTS,s.board||'')}</td>
+    <td style="background:rgba(16,185,129,0.05);">${makeDrop(s.id,'irf',IRF_OPTS,s.irf||'')}</td>
+    <td style="background:rgba(16,185,129,0.05);">${fs(s.id,s.finalStatus)}</td>
+    <td style="background:rgba(245,158,11,0.07);">${makeAuditorDrop(s.id,s.auditor||'')}</td>
+    <td style="background:rgba(245,158,11,0.07);">${makeAuditTypeDrop(s.id,s.auditType||'')}</td>
+    <td style="font-family:var(--mono);font-size:9px;color:var(--muted);white-space:nowrap;background:rgba(245,158,11,0.07);">${s.date}</td>
+    <td><button class="btn-sm" style="font-size:9px;padding:1px 6px;color:var(--red)" onclick="delStudio(${s.id})">🗑</button></td>
+  </tr>`).join(''):`<tr><td colspan="19" style="text-align:center;color:var(--muted);padding:24px">No studios found.</td></tr>`;
+}
+function delStudio(id){if(confirm('Delete?')){STUDIOS=STUDIOS.filter(s=>s.id!==id);filterStudios();document.getElementById('sb-total').textContent=STUDIOS.length;}}
+
+// ═══ AUDIT ═══
+const LEADER_CATS={'Sanyam Jain Sir':['AIR','CUET UG','Foundation','Foundation & Board','Gurukul','IIT-JEE','NDA','NEET','Vernacular'],'Rajat Agarwal Sir':['AE/JE','BPSC','GATE','Judiciary','MPPSC','MPSC','OPSC','Ras Wallah','UPPSC','UPSC'],'Prashant Soni → Abhishek Sir':['Banking','Bihar Exams','JAIIB CAIIB','Pharma','SSC','SSC / Railways','TET','WBPSC'],'Manish Kumar Sir':['ACCA','BFSI','CA','COMMERCE','CS','SIR NET','IIT JAM','Law','MBA','MedEd','Nursing','UGC NET'],'Offline Sir (Pathshala)':['Pathshala'],'Ankit Kohli Sir (Power Batch)':['Power Batch'],'Mohammed Saad Salmaan Sir':['General']};
+function updateAFCat(){const el=document.getElementById('af-leader');const catEl=document.getElementById('af-category');if(!el||!catEl)return;const cats=LEADER_CATS[el.value]||[];catEl.innerHTML='<option value="">Select</option>'+cats.map(c=>`<option>${c}</option>`).join('');}
+function updateNSCat(){const cats=LEADER_CATS[document.getElementById('ns-leader').value]||[];document.getElementById('ns-category').innerHTML='<option value="">Select</option>'+cats.map(c=>`<option>${c}</option>`).join('');}
+function selQ(field,val,el){el.closest('.cf-right').querySelectorAll('.rb').forEach(b=>b.className='rb');auditQ[field]=val;el.classList.add(val==='Pass'?'sel-pass':val==='Fail'?'sel-fail':'sel-rev');}
+function selQDrop(field,val){
+  auditQ[field]=val;
+  const badge=document.getElementById('q-'+field+'-badge');
+  if(!badge) return;
+  if(!val){badge.style.display='none';return;}
+  badge.style.display='inline-block';
+  if(val==='Perfect'||val==='No'){
+    badge.style.background='rgba(16,185,129,0.15)';badge.style.color='var(--green)';badge.style.border='1px solid rgba(16,185,129,0.3)';
+  } else if(val.startsWith('Fail')){
+    badge.style.background='rgba(239,68,68,0.15)';badge.style.color='var(--red)';badge.style.border='1px solid rgba(239,68,68,0.3)';
+  } else {
+    badge.style.background='rgba(245,158,11,0.15)';badge.style.color='var(--gold)';badge.style.border='1px solid rgba(245,158,11,0.3)';
+  }
+  badge.textContent=val;
+}
+function submitAudit(){
+  const req=['af-leader','af-faculty','af-status','af-auditor','af-auditType','af-date','af-video'];
+  if(req.some(id=>{const el=document.getElementById(id);return !el||!el.value;})){alert('⚠️ Fill all required fields (including Audit Type)!');return;}
+  const status=(document.getElementById('af-status')||{}).value||'';
+  const params=['frame','reflection','light','audio','avSync','board','irf'];
+  const anyFail=params.some(p=>auditQ[p]&&auditQ[p].startsWith('Fail'));
+  const finalStatus=(params.every(p=>auditQ[p])&&!anyFail)?'Perfect Studio':(anyFail?'Not Perfect':'');
+  const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  const entry={
+    id:Date.now(),
+    name:gv('af-faculty'),
+    leader:gv('af-leader'),
+    category:gv('af-category'),
+    city:gv('af-city'),
+    ownership:gv('af-ownership'),
+    mail:gv('af-mail'),
+    contact:gv('af-contact'),
+    videoLink:gv('af-video'),
+    auditor:gv('af-auditor'),
+    auditType:gv('af-auditType'),
+    date:gv('af-date'),
+    frame:auditQ.frame||'',
+    reflection:auditQ.reflection||'',
+    light:auditQ.light||'',
+    audio:auditQ.audio||'',
+    avSync:auditQ.avSync||'',
+    board:auditQ.board||'',
+    irf:auditQ.irf||'',
+    finalStatus,
+    submitted:new Date().toISOString().split('T')[0]
+  };
+  if(status==='approved'){
+    PENDING_APPROVALS.push(entry);
+    document.getElementById('pendApprBadge').textContent=PENDING_APPROVALS.length;
+    showToast('✅ Sent for Approval!','gold');
+  } else {
+    STUDIOS.push({...entry,status});
+    document.getElementById('sb-total').textContent=STUDIOS.length;
+    updateTPData(entry.auditor,entry.auditType,entry.date);
+
+    // ── EMAIL NOTIFICATION ──
+    const templateParams={
+      faculty_name : entry.name,
+      leader       : entry.leader,
+      city         : entry.city||'—',
+      category     : entry.category||'—',
+      ownership    : entry.ownership==='pw'?'PW Owned':'Educator Owned',
+      date         : entry.date,
+      status       : entry.finalStatus||status,
+      auditor      : entry.auditor,
+      frame        : entry.frame||'—',
+      reflection   : entry.reflection||'—',
+      audio        : entry.audio||'—',
+      light        : entry.light||'—',
+      av_sync      : entry.avSync||'—',
+      board        : entry.board||'—',
+      irf          : entry.irf||'—',
+      video_link   : entry.videoLink||'—',
+    };
+    // ── Apps Script se email + Sheet save ──
+    fetch(SHEET_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        date:        entry.date,
+        faculty:     entry.name,
+        facultyMail: entry.mail,
+        leader:      entry.leader,
+        category:    entry.category,
+        city:        entry.city,
+        ownership:   entry.ownership,
+        auditor:     entry.auditor,
+        auditType:   entry.auditType,
+        frame:       entry.frame,
+        reflection:  entry.reflection,
+        lighting:    entry.light,
+        audio:       entry.audio,
+        avSync:      entry.avSync,
+        board:       entry.board,
+        irf:         entry.irf,
+        finalStatus: entry.finalStatus,
+        videoLink:   entry.videoLink,
+        postVideo:   '',
+        remark:      entry.remark||''
+      })
+    })
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.status==='ok') showToast('✅ Audit saved & email sent! 📧','green');
+      else showToast('✅ Audit saved! (Email issue: '+res.message+')','gold');
+    })
+    .catch(err=>{ console.error('Submit error:',err); showToast('✅ Audit saved locally!','gold'); });
+  }
+  resetAudit();
+}
+function resetAudit(){['af-leader','af-category','af-faculty','af-mail','af-contact','af-city','af-video','af-remark','af-status','af-auditor','af-auditType','af-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.querySelectorAll('.rb').forEach(b=>b.className='rb');['frame','reflection','light','audio','avSync','board','irf'].forEach(f=>{const s=document.getElementById('q-'+f+'-sel');if(s)s.value='';const b=document.getElementById('q-'+f+'-badge');if(b)b.style.display='none';});Object.keys(auditQ).forEach(k=>delete auditQ[k]);}
+
+// ═══ APPROVALS ═══
+function openLatestVideo(){
+  const ap = PENDING_APPROVALS[0];
+  if(ap && ap.videoLink){ window.open(ap.videoLink,'_blank'); }
+  else { alert('Koi video link available nahi hai abhi.'); }
+}
+function renderApprovals(){
+  const list=document.getElementById('approvalList');
+  if(!PENDING_APPROVALS.length){list.innerHTML=`<div class="card" style="text-align:center;padding:30px;color:var(--muted)">🎉 No pending approvals!</div>`;return;}
+  const pv=(v)=>{
+    if(!v||v==='—')return'<span class="aq-check rev">— N/A</span>';
+    if(v==='Perfect'||v==='No')return`<span class="aq-check">✅ ${v}</span>`;
+    if(v.startsWith('Fail'))return`<span class="aq-check fail">❌ ${v.replace('Fail - ','')}</span>`;
+    return`<span class="aq-check rev">⚠️ ${v}</span>`;
+  };
+  list.innerHTML=PENDING_APPROVALS.map(ap=>`
+    <div class="aq-item" id="apItem${ap.id}" style="align-items:flex-start;padding:14px 16px;gap:14px;">
+      <div class="aq-avatar" style="width:42px;height:42px;font-size:16px;border-radius:10px;flex-shrink:0;">${ap.name.charAt(0)}</div>
+      <div class="aq-info" style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-size:13px;font-weight:800;color:#fff;">${ap.name}</span>
+          <span style="padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;background:${ap.ownership==='pw'?'rgba(59,130,246,0.15)':'rgba(249,115,22,0.15)'};color:${ap.ownership==='pw'?'var(--blue)':'var(--orange)'};border:1px solid ${ap.ownership==='pw'?'rgba(59,130,246,0.3)':'rgba(249,115,22,0.3)'};">${ap.ownership==='pw'?'🏢 PW Owned':'🧑‍🏫 Educator Owned'}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px 12px;margin-bottom:10px;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;">
+            <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:2px;">📚 Category</div>
+            <div style="font-size:11px;font-weight:700;color:var(--text);">${ap.category||'—'}</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;">
+            <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:2px;">📍 Location</div>
+            <div style="font-size:11px;font-weight:700;color:var(--text);">${ap.city||'—'}</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;">
+            <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:2px;">👥 Leader</div>
+            <div style="font-size:11px;font-weight:700;color:var(--text);">${ap.leader?ap.leader.split(' ')[0]:'—'}</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;">
+            <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:2px;">📧 Email</div>
+            <div style="font-size:10px;font-weight:600;color:var(--accent2);">${ap.mail||'—'}</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;">
+            <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:2px;">📞 Contact</div>
+            <div style="font-size:11px;font-weight:700;color:var(--text);">${ap.contact||'—'}</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;">
+            <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:2px;">📅 Date</div>
+            <div style="font-size:11px;font-weight:700;color:var(--text);">${ap.submitted||'—'}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          ${ap.videoLink
+            ? `<a href="${ap.videoLink}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:7px;background:rgba(79,110,247,0.15);border:1px solid rgba(79,110,247,0.35);color:var(--accent2);font-size:10px;font-weight:700;text-decoration:none;">🔗 Video Link — Click to Open</a>`
+            : `<span style="font-size:10px;color:var(--red);font-weight:600;padding:5px 10px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:7px;">⚠️ Video Link Not Added</span>`
+          }
+          ${ap.approvalPdf
+            ? `<a href="${ap.approvalPdf}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:7px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:var(--green);font-size:10px;font-weight:700;text-decoration:none;">📄 Approval PDF</a>`
+            : ''
+          }
+        </div>
+      </div>
+      <div class="aq-actions" style="flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn-sm btn-green" style="font-size:10px;white-space:nowrap;" onclick="approveStudio(${ap.id})">✅ Approve</button>
+        <button class="btn-sm" style="border-color:rgba(239,68,68,0.3);color:var(--red);font-size:10px;white-space:nowrap;" onclick="rejectApproval(${ap.id})">❌ Reject</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('pendingApprovalCount').textContent=PENDING_APPROVALS.length+' Pending';
+  document.getElementById('pendApprBadge').textContent=PENDING_APPROVALS.length;
+}
+function approveStudio(id){
+  const ap=PENDING_APPROVALS.find(a=>a.id===id);if(!ap) return;
+  if(!confirm(`Approve studio for ${ap.name}?`)) return;
+  STUDIOS.push({id:nextId++,name:ap.name,leader:ap.leader,category:ap.category,city:ap.city,ownership:ap.ownership,status:'perfect',reflection:ap.reflection,audio:ap.audio,frame:ap.frame,light:ap.light,auditor:'Approved via Dashboard',date:new Date().toISOString().split('T')[0]});
+  PENDING_APPROVALS=PENDING_APPROVALS.filter(a=>a.id!==id);
+  document.getElementById('sb-total').textContent=STUDIOS.length;
+  setTimeout(()=>renderApprovals(),100);
+  alert(`✅ ${ap.name} APPROVED & Live!`);
+}
+function rejectApproval(id){
+  const reason=prompt('Reason for rejection:');if(reason===null) return;
+  PENDING_APPROVALS=PENDING_APPROVALS.filter(a=>a.id!==id);
+  renderApprovals();alert(`❌ Studio rejected: "${reason}"`);
+}
+
+// ═══ ISSUES ═══
+function renderIssues(){
+  const period=document.getElementById('issuePeriodSel').value;
+  const d=ISSUE_DATA[period]||ISSUE_DATA.this;
+  const max=Math.max(d.ref,d.frame,d.video,d.audio,d.avs);
+  [['ref',d.ref],['frame',d.frame],['video',d.video],['audio',d.audio],['avs',d.avs]].forEach(([k,v])=>{
+    const el=document.getElementById('ik-'+k);if(el)el.textContent=v;
+    const fl=document.getElementById('ikf-'+k);if(fl)fl.style.width=Math.round(v/max*100)+'%';
+  });
+  dc('issTrend');
+  C['issTrend']=new Chart(document.getElementById('issueTrendChart'),{type:'line',data:{labels:WL,datasets:[
+    {label:'Reflection',    data:[18,20,21,19,23],borderColor:'#ef4444',tension:.4,pointRadius:3,pointBackgroundColor:'#ef4444'},
+    {label:'Camera Frame',  data:[14,15,16,17,19],borderColor:'#3b82f6',tension:.4,pointRadius:3,pointBackgroundColor:'#3b82f6'},
+    {label:'Video Quality', data:[11,12,13,14,15],borderColor:'#f59e0b',tension:.4,pointRadius:3,pointBackgroundColor:'#f59e0b'},
+    {label:'Audio Quality', data:[10,11,12,12,14],borderColor:'#f97316',tension:.4,pointRadius:3,pointBackgroundColor:'#f97316'},
+    {label:'AV Sync',       data:[7, 8, 9, 9,10], borderColor:'#8b5cf6',tension:.4,pointRadius:3,pointBackgroundColor:'#8b5cf6'},
+  ]},options:{...baseOpts}});
+  dc('issSplit');
+  const sV=[d.ref,d.frame,d.video,d.audio,d.avs];
+  const sC=['#ef4444','#3b82f6','#f59e0b','#f97316','#8b5cf6'];
+  const sL=['Reflection','Camera Frame','Video Quality','Audio Quality','AV Sync'];
+  const tot=sV.reduce((a,b)=>a+b,0);
+  C['issSplit']=new Chart(document.getElementById('issueSplitChart'),{type:'doughnut',data:{labels:sL,datasets:[{data:sV,backgroundColor:sC,borderWidth:2,borderColor:'#080d1a',hoverOffset:4}]},options:{...noScales,cutout:'65%'}});
+  document.getElementById('issueSplitLegend').innerHTML=sL.map((l,i)=>`<div class="dl-item"><div class="dl-dot" style="background:${sC[i]}"></div><div class="dl-label">${l}</div><div class="dl-val" style="color:${sC[i]}">${sV[i]}</div><div class="dl-pct">(${Math.round(sV[i]/tot*100)}%)</div></div>`).join('');
+
+  // PW vs Educator Issues chart
+  dc('pwEduIssue');
+  C['pwEduIssue']=new Chart(document.getElementById('pwEduIssueChart'),{type:'bar',data:{
+    labels:['Reflection','Camera Frame','Video Quality','Audio Quality','AV Sync'],
+    datasets:[
+      {label:'PW Owned Faculty',  data:[13,11,9,8,6],backgroundColor:'rgba(59,130,246,0.75)',borderRadius:4},
+      {label:'Educator Faculty',  data:[10, 8,6,6,4],backgroundColor:'rgba(249,115,22,0.75)',borderRadius:4},
+    ]
+  },options:{...baseOpts,plugins:{...baseOpts.plugins,legend:{display:true,labels:{color:'#94a3b8',font:{size:10}}}}}});
+
+  // Issues by Leader chart
+  dc('leaderIssue');
+  C['leaderIssue']=new Chart(document.getElementById('leaderIssueChart'),{type:'bar',data:{
+    labels:['Sanyam','Rajat','Abhishek','Manish'],
+    datasets:[{
+      label:'Total Issues',
+      data:[23,18,13,12],
+      backgroundColor:['rgba(79,110,247,0.8)','rgba(16,185,129,0.8)','rgba(239,68,68,0.8)','rgba(139,92,246,0.8)'],
+      borderRadius:4,
+    }]
+  },options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' issues'}}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#94a3b8',font:{size:10}},grid:{display:false}}}}});
+
+  // City-wise issue table
+  const CITY_ISSUES=[
+    {city:'Delhi',    ref:6,cam:3,lit:4,av:2,aud:5,total:20,sev:'High'},
+    {city:'Mumbai',   ref:4,cam:2,lit:3,av:1,aud:4,total:14,sev:'High'},
+    {city:'Lucknow',  ref:3,cam:2,lit:2,av:2,aud:3,total:12,sev:'High'},
+    {city:'Patna',    ref:4,cam:2,lit:3,av:1,aud:3,total:13,sev:'High'},
+    {city:'Pune',     ref:2,cam:1,lit:1,av:1,aud:2,total:7, sev:'Med'},
+    {city:'Chennai',  ref:2,cam:1,lit:1,av:0,aud:1,total:5, sev:'Low'},
+    {city:'Hyderabad',ref:1,cam:1,lit:1,av:1,aud:1,total:5, sev:'Low'},
+    {city:'Jaipur',   ref:1,cam:0,lit:0,av:0,aud:0,total:1, sev:'Low'},
+  ];
+  const sevColor={High:'var(--red)',Med:'var(--gold)',Low:'var(--green)'};
+  const sevBg={High:'rgba(239,68,68,0.12)',Med:'rgba(245,158,11,0.12)',Low:'rgba(16,185,129,0.12)'};
+  document.getElementById('cityIssueBody').innerHTML=CITY_ISSUES.map(c=>`
+    <tr>
+      <td style="font-weight:700;color:#fff;">📍 ${c.city}</td>
+      <td style="color:#ef4444;font-weight:700;text-align:center;">${c.ref||'—'}</td>
+      <td style="color:#3b82f6;font-weight:700;text-align:center;">${c.cam||'—'}</td>
+      <td style="color:#f59e0b;font-weight:700;text-align:center;">${c.lit||'—'}</td>
+      <td style="color:#8b5cf6;font-weight:700;text-align:center;">${c.av||'—'}</td>
+      <td style="color:#f97316;font-weight:700;text-align:center;">${c.aud||'—'}</td>
+      <td style="font-weight:800;color:#fff;text-align:center;">${c.total}</td>
+      <td style="text-align:center;"><span style="padding:2px 10px;border-radius:20px;font-size:9px;font-weight:700;background:${sevBg[c.sev]};color:${sevColor[c.sev]};border:1px solid ${sevColor[c.sev].replace('var(','').replace(')','')};"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${sevColor[c.sev]};margin-right:4px;vertical-align:middle;"></span>${c.sev}</span></td>
+    </tr>`).join('');
+
+  // City issue bar chart (hidden by default)
+  dc('cityIssueBar');
+  C['cityIssueBar']=new Chart(document.getElementById('cityIssueBarChart'),{type:'bar',data:{
+    labels:CITY_ISSUES.map(c=>c.city),
+    datasets:[
+      {label:'Reflection', data:CITY_ISSUES.map(c=>c.ref), backgroundColor:'rgba(239,68,68,0.7)',  borderRadius:3},
+      {label:'Camera',     data:CITY_ISSUES.map(c=>c.cam), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:3},
+      {label:'Lighting',   data:CITY_ISSUES.map(c=>c.lit), backgroundColor:'rgba(245,158,11,0.7)', borderRadius:3},
+      {label:'AV Sync',    data:CITY_ISSUES.map(c=>c.av),  backgroundColor:'rgba(139,92,246,0.7)', borderRadius:3},
+      {label:'Audio',      data:CITY_ISSUES.map(c=>c.aud), backgroundColor:'rgba(249,115,22,0.7)', borderRadius:3},
+    ]
+  },options:{...baseOpts,plugins:{...baseOpts.plugins,legend:{display:true,labels:{color:'#94a3b8',font:{size:9}}}},scales:{x:{stacked:true,ticks:{color:'#64748b',font:{size:9}},grid:{color:'rgba(255,255,255,0.03)'}},y:{stacked:true,ticks:{color:'#64748b',font:{size:9}},grid:{color:'rgba(255,255,255,0.03)'}}}}});
+}
+
+function switchCityIssueView(view, btn){
+  document.querySelectorAll('.tog').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cityIssueTableWrap').style.display = view==='table'?'block':'none';
+  document.getElementById('cityIssueChartWrap').style.display = view==='chart'?'block':'none';
+}
+
+// ═══ STUDIO BREAKUP CHART ═══
+// Extended city data with PW + Edu split matching image style
+const CITY_BREAKUP=[
+  {city:'Delhi',     pw:18, edu:14},
+  {city:'Lucknow',   pw:15, edu:16},
+  {city:'Patna',     pw:10, edu:18},
+  {city:'Bangalore', pw:14, edu:14},
+  {city:'Ahmedabad', pw:9,  edu:18},
+  {city:'Bhopal',    pw:17, edu:10},
+  {city:'Mumbai',    pw:12, edu:14},
+  {city:'Kolkata',   pw:10, edu:14},
+  {city:'Surat',     pw:9,  edu:13},
+  {city:'Pune',      pw:12, edu:10},
+  {city:'Chennai',   pw:10, edu:10},
+  {city:'Hyderabad', pw:9,  edu:9},
+  {city:'Jaipur',    pw:8,  edu:8},
+  {city:'Chandigarh',pw:5,  edu:6},
+  {city:'Nagpur',    pw:4,  edu:4},
+];
+
+function renderStudioBreakup(){
+  const filter=document.getElementById('sbFilterSel').value;
+  const sortBy=document.getElementById('sbSortSel').value;
+
+  let data=[...CITY_BREAKUP];
+
+  // Sort
+  if(sortBy==='total') data.sort((a,b)=>(b.pw+b.edu)-(a.pw+a.edu));
+  else if(sortBy==='pw') data.sort((a,b)=>b.pw-a.pw);
+  else if(sortBy==='edu') data.sort((a,b)=>b.edu-a.edu);
+
+  // Max for bar scaling
+  const maxTotal=Math.max(...data.map(d=>d.pw+d.edu));
+
+  document.getElementById('sbLocCount').textContent=data.length+' locations';
+
+  const wrap=document.getElementById('sbRowWrap');
+  wrap.innerHTML=data.map(d=>{
+    const total=d.pw+d.edu;
+    const pwW=Math.round((d.pw/maxTotal)*100);
+    const eduW=Math.round((d.edu/maxTotal)*100);
+    const totW=Math.round((total/maxTotal)*100);
+
+    let bars='';
+    if(filter==='all'||filter==='pw'){
+      bars+=`<div class="sb-bar-pw" style="width:${pwW}%"></div>`;
+    }
+    if(filter==='all'||filter==='edu'){
+      bars+=`<div class="sb-bar-edu" style="width:${eduW}%"></div>`;
+    }
+    if(filter==='all'){
+      bars+=`<div class="sb-bar-total" style="width:${totW}%"></div>`;
+    }
+
+    const statsStr=filter==='all'
+      ? `PW: ${d.pw} &nbsp;Edu: ${d.edu} &nbsp;<b style="color:#fff">Total: ${total}</b>`
+      : filter==='pw'
+        ? `PW: <b style="color:#8b5cf6">${d.pw}</b>`
+        : `Edu: <b style="color:#06b6d4">${d.edu}</b>`;
+
+    return `<div class="sb-city-row">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <span class="sb-city-name">${d.city}</span>
+        <span class="sb-stats">${statsStr}</span>
+      </div>
+      <div class="sb-bar-track">
+        <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+          ${bars}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ CITIES ═══
+function renderCities(){
+  document.getElementById('cityTableBody').innerHTML=CITY_DATA.map(c=>{
+    const improved=c.pwP+c.edP; const pct=Math.round(improved/c.total*100);
+    return `<tr>
+      <td style="font-weight:700;color:#fff">📍 ${c.city}</td>
+      <td style="font-family:var(--mono);color:var(--cyan);text-align:center">${c.total}</td>
+      <td style="font-family:var(--mono);color:var(--blue);text-align:center">${c.pwP}</td>
+      <td style="font-family:var(--mono);color:var(--orange);text-align:center">${c.edP}</td>
+      <td style="font-family:var(--mono);color:var(--green);font-weight:700;text-align:center">${improved}</td>
+      <td style="font-family:var(--mono);color:var(--gold);text-align:center">${c.wip}</td>
+      <td style="font-family:var(--mono);color:var(--red);text-align:center">${c.pending}</td>
+      <td><div class="city-prog"><div class="city-prog-bar"><div class="city-prog-fill" style="width:${pct}%"></div></div><span style="font-size:10px;color:var(--green);font-weight:700;min-width:32px">${pct}%</span></div></td>
+    </tr>`;
+  }).join('');
+}
+function filterCities(){
+  const q=document.getElementById('citySearch').value.toLowerCase();
+  document.querySelectorAll('#cityTable tbody tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
+}
+
+// ═══ MODAL ═══
+function openModal(){document.getElementById('addModal').classList.add('open');}
+function closeModal(){document.getElementById('addModal').classList.remove('open');}
+function showToast(msg, color='green'){
+  let t=document.getElementById('emailToast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='emailToast';
+    t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:opacity .4s;';
+    document.body.appendChild(t);
+  }
+  const colors={'green':'rgba(16,185,129,0.95)','gold':'rgba(245,158,11,0.95)','red':'rgba(239,68,68,0.95)'};
+  t.style.background=colors[color]||colors.green;
+  t.textContent=msg;
+  t.style.opacity='1';
+  setTimeout(()=>t.style.opacity='0',8000);
+}
+
+function saveStudio(){
+  const nameEl=document.getElementById('ns-name');
+  const leaderEl=document.getElementById('ns-leader');
+  const cityEl=document.getElementById('ns-city');
+  const categoryEl=document.getElementById('ns-category');
+  const ownershipEl=document.getElementById('ns-ownership');
+
+  if(!nameEl||!leaderEl){alert('Form fields not found!');return;}
+  const name=nameEl.value, leader=leaderEl.value;
+  if(!name||!leader){alert('Fill required fields!');return;}
+
+  const city=cityEl?cityEl.value:'';
+  const category=categoryEl?categoryEl.value:'';
+  const ownership=ownershipEl?ownershipEl.value:'educator';
+  const today=new Date().toISOString().split('T')[0];
+
+  STUDIOS.push({id:nextId++,name,leader,category,city,ownership,status:'pending',reflection:'—',audio:'—',frame:'—',light:'—',auditor:'',date:today});
+  const badge=document.getElementById('sb-total');
+  if(badge) badge.textContent=STUDIOS.length;
+  closeModal();
+
+  // ── EMAIL NOTIFICATION ──
+  if(typeof emailjs !== 'undefined'){
+    // EmailJS removed — using Apps Script
+    showToast('✅ Studio added: '+name,'green');
+  } else {
+    showToast('✅ Studio added: '+name,'green');
+  }
+}
+document.getElementById('addModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ═══ NAV ═══
+let dashBuilt=false,weeklyBuilt=false;
+function nav(id,tabEl,sbEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  if(tabEl) tabEl.classList.add('active');
+  if(sbEl) sbEl.classList.add('active');
+  if(id==='dashboard'&&!dashBuilt){buildTrend();buildOwnershipDonuts();buildNewStudios();buildDashIssues();buildLeaderSummaryTable();animKPIs();dashBuilt=true;}
+  if(id==='weekly'&&!weeklyBuilt){buildWeekCompare();buildWeekTable();buildWeeklyLeaderChart();buildStatusHist();weeklyBuilt=true;}
+  if(id==='leaders') renderLeaders();
+  if(id==='studios') filterStudios();
+  if(id==='approvals') renderApprovals();
+  if(id==='issues') renderIssues();
+  if(id==='cities'){renderCities();renderStudioBreakup();}
+  if(id==='audit'){
+    const dl=document.getElementById('facultyList');
+    if(dl){dl.innerHTML='';const names=[...new Set(STUDIOS.map(s=>s.name))];names.forEach(n=>{const o=document.createElement('option');o.value=n;dl.appendChild(o);});}
+  }
+  if(id==='audit'){
+    const dateEl=document.getElementById('af-date');
+    if(dateEl&&!dateEl.value) dateEl.value=new Date().toISOString().split('T')[0];
+  }
+  if(id==='teamperf'){renderTeamPerf();}
+}
+
+// ═══ AUDIT PAGE ═══
+function afUpdateCat(){
+  const cats=LEADER_CATS[document.getElementById('a2-af-leader').value]||[];
+  document.getElementById('a2-af-category').innerHTML='<option value="">Select</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+}
+
+function afReset(){
+  ['a2-af-faculty','a2-af-leader','a2-af-category','a2-af-city','a2-af-ownership',
+   'a2-af-video','a2-af-mail','a2-af-contact','a2-af-auditor','a2-af-auditType',
+   'a2-af-date','a2-af-remark','a2-af-status'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['a2-afq-camera-frame','a2-afq-reflection','a2-afq-lighting','a2-afq-audio',
+   'a2-afq-av-sync','a2-afq-board','a2-afq-irf'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+}
+
+function afSubmit(){
+  const faculty   = (document.getElementById('a2-af-faculty')?.value||'').trim();
+  const leader    = (document.getElementById('a2-af-leader')?.value||'').trim();
+  const auditor   = (document.getElementById('a2-af-auditor')?.value||'').trim();
+  const auditType = (document.getElementById('a2-af-auditType')?.value||'').trim();
+  const date      = (document.getElementById('a2-af-date')?.value||'').trim();
+  const video     = (document.getElementById('a2-af-video')?.value||'').trim();
+
+  const missing=[];
+  if(!faculty)   missing.push('Faculty Name');
+  if(!leader)    missing.push('Leader');
+  if(!auditor)   missing.push('Auditor Name');
+  if(!auditType) missing.push('Audit Type');
+  if(!date)      missing.push('Date');
+  if(!video)     missing.push('Video Link');
+
+  if(missing.length){
+    alert('⚠️ Ye fields bhar do:\n• '+missing.join('\n• '));
+    return;
+  }
+
+  const city      = document.getElementById('a2-af-city')?.value||'';
+  const category  = document.getElementById('a2-af-category')?.value||'';
+  const ownership = document.getElementById('a2-af-ownership')?.value||'educator';
+  const status    = document.getElementById('a2-af-status')?.value||'perfect';
+  const remark    = document.getElementById('a2-af-remark')?.value||'';
+
+  const qParams={
+    frame     : document.getElementById('a2-afq-camera-frame')?.value||'—',
+    reflection: document.getElementById('a2-afq-reflection')?.value||'—',
+    light     : document.getElementById('a2-afq-lighting')?.value||'—',
+    audio     : document.getElementById('a2-afq-audio')?.value||'—',
+    avSync    : document.getElementById('a2-afq-av-sync')?.value||'—',
+    board     : document.getElementById('a2-afq-board')?.value||'—',
+    irf       : document.getElementById('a2-afq-irf')?.value||'—',
+  };
+
+  const anyFail=Object.values(qParams).some(v=>v==='Fail');
+  const finalStatus=anyFail?'Not Perfect':'Perfect Studio';
+
+  const entry={
+    id:Date.now(), name:faculty, leader, category, city, ownership,
+    videoLink:video, auditor, auditType, date, remark,
+    ...qParams, finalStatus,
+    status: status==='approved'?'pending':status,
+  };
+
+  if(status==='approved'){
+    PENDING_APPROVALS.push(entry);
+    const badge=document.getElementById('pendApprBadge');
+    if(badge) badge.textContent=PENDING_APPROVALS.length;
+  } else {
+    STUDIOS.push(entry);
+    const badge=document.getElementById('sb-total');
+    if(badge) badge.textContent=STUDIOS.length;
+  }
+
+  // ── SAVE TO GOOGLE SHEET + EMAIL ──
+  fetch(SHEET_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      date:        entry.date,
+      faculty:     entry.name,
+      facultyMail: document.getElementById('a2-af-mail')?.value||'',
+      leader:      entry.leader,
+      category:    entry.category,
+      city:        entry.city,
+      ownership:   entry.ownership,
+      auditor:     entry.auditor,
+      auditType:   entry.auditType,
+      frame:       entry.frame||'—',
+      reflection:  entry.reflection||'—',
+      lighting:    entry.light||'—',
+      audio:       entry.audio||'—',
+      avSync:      entry.avSync||'—',
+      board:       entry.board||'—',
+      irf:         entry.irf||'—',
+      finalStatus: entry.finalStatus,
+      videoLink:   entry.videoLink||'',
+      postVideo:   '',
+      remark:      entry.remark||''
+    })
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.status==='ok') showToast('✅ Audit submitted & email sent! 📧','green');
+    else showToast('✅ Audit saved! (Email issue: '+res.message+')','gold');
+  })
+  .catch(err=>{ console.error('Submit error:',err); showToast('✅ Audit saved locally!','gold'); });
+  afReset();
+}
+
+function exportCSV(){
+  const lines=['Leader,Studio,Category,City,Ownership,Status,Reflection,Audio,Frame,Light,Auditor,Date'];
+  STUDIOS.forEach(s=>lines.push([s.leader,s.name,s.category,s.city,s.ownership,s.status,s.reflection,s.audio,s.frame,s.light,s.auditor,s.date].join(',')));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download='PanIndia_Studio_Audit.csv';a.click();
+}
+
+// ═══ TEAM PERFORMANCE ═══
+// Virtual vs Home Visit per auditor per week
+const TP_VIRTUAL={
+  'Vinay Pal':     {w14:6,w15:7,w16:8,w17:5,w18:8},
+  'Ajit Bala':     {w14:4,w15:5,w16:6,w17:7,w18:6},
+  'Vishnu Pandey': {w14:7,w15:6,w16:7,w17:8,w18:7},
+  'Kapil Sharma':  {w14:3,w15:4,w16:5,w17:4,w18:6},
+  'Abhimanyu Singh':{w14:5,w15:6,w16:4,w17:6,w18:5},
+  'Sanjay Yadav':  {w14:3,w15:3,w16:4,w17:3,w18:3},
+};
+const TP_HOMEVISIT={
+  'Vinay Pal':     {w14:2,w15:2,w16:2,w17:2,w18:3},
+  'Ajit Bala':     {w14:2,w15:2,w16:2,w17:2,w18:2},
+  'Vishnu Pandey': {w14:2,w15:2,w16:2,w17:2,w18:2},
+  'Kapil Sharma':  {w14:2,w15:2,w16:2,w17:2,w18:2},
+  'Abhimanyu Singh':{w14:2,w15:2,w16:2,w17:2,w18:2},
+  'Sanjay Yadav':  {w14:1,w15:2,w16:2,w17:2,w18:1},
+};
+
+function updateTPData(auditorName, auditType, date){
+  // Called when new audit is submitted — updates real data
+  // For now just triggers re-render
+  if(document.getElementById('page-teamperf').classList.contains('active')) renderTeamPerf();
+}
+
+function renderTeamPerf(){
+  const period=document.getElementById('tpPeriodSel').value;
+  const isMonthly=period==='monthly';
+  document.getElementById('tpTableTitle').textContent=isMonthly?'📋 Monthly Team Summary — All Auditors':'📋 Weekly Team Summary — '+period.toUpperCase();
+
+  const getVal=(obj,aud)=>isMonthly?Object.values(obj[aud]||{}).reduce((s,v)=>s+v,0):(obj[aud]?obj[aud][period]||0:0);
+  const days=isMonthly?25:6;
+
+  // Merge with actual STUDIOS data
+  const countFromStudios=(aud,type)=>{
+    const dateFilter=isMonthly?null:{w14:'2026-03',w15:'2026-04-07',w16:'2026-04-07',w17:'2026-04-14',w18:'2026-04-21'}[period];
+    return STUDIOS.filter(s=>s.auditor===aud&&(type?s.auditType===type:true)).length;
+  };
+
+  // KPI Row
+  document.getElementById('tpKpiRow').innerHTML=AUDITORS.map((a,i)=>{
+    const v=getVal(TP_VIRTUAL,a); const h=getVal(TP_HOMEVISIT,a);
+    const total=v+h;
+    const pct=total>0?Math.round(v/total*100):0;
+    return`<div class="kpi" style="border-color:${AUD_COLORS[i]}33;">
+      <div class="kpi-glow" style="background:${AUD_COLORS[i]}"></div>
+      <div class="kpi-label" style="color:${AUD_COLORS[i]}">${a.split(' ')[0]}</div>
+      <div class="kpi-val" style="color:${AUD_COLORS[i]};font-size:22px">${total}</div>
+      <div class="kpi-sub">🖥️ ${v} Virtual &nbsp;·&nbsp; 🏠 ${h} Visit</div>
+      <div class="kpi-bar"><div class="kpi-fill" style="width:${pct}%;background:${AUD_COLORS[i]}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Summary Table
+  document.getElementById('tpTableBody').innerHTML=AUDITORS.map((a,i)=>{
+    const v=getVal(TP_VIRTUAL,a); const h=getVal(TP_HOMEVISIT,a);
+    const total=v+h;
+    const perfect=isMonthly?Object.values(AUD_PERFECT[a]).reduce((s,x)=>s+x,0):AUD_PERFECT[a][period]||0;
+    const irf=isMonthly?Object.values(AUD_IRF[a]).reduce((s,x)=>s+x,0):AUD_IRF[a][period]||0;
+    const notPerf=total-perfect;
+    const avg=total?(total/days).toFixed(1):0;
+    const pct=total?Math.round(perfect/total*100):0;
+    const bar=`<div style="display:flex;align-items:center;gap:5px;"><div style="flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,0.05);min-width:60px;"><div style="height:100%;border-radius:4px;background:${AUD_COLORS[i]};width:${pct}%"></div></div><span style="font-size:9px;color:${AUD_COLORS[i]};font-weight:700">${pct}%</span></div>`;
+    return`<tr>
+      <td style="color:var(--muted);font-size:10px">${i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:${AUD_COLORS[i]};flex-shrink:0"></div><span style="font-weight:700;color:#fff">${a}</span></div></td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--cyan);font-weight:700">${total}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--blue)">${v}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--orange)">${h}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--gold)">${irf}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--muted2)">${avg}</td>
+      <td style="min-width:120px;">${bar}</td>
+    </tr>`;
+  }).join('');
+
+  // Trend Chart
+  dc('tpTrend');
+  C['tpTrend']=new Chart(document.getElementById('tpTrendChart'),{
+    type:'line',
+    data:{labels:WL,datasets:AUDITORS.map((a,i)=>({
+      label:a.split(' ')[0],
+      data:WEEKS.map(w=>(TP_VIRTUAL[a]?.[w]||0)+(TP_HOMEVISIT[a]?.[w]||0)),
+      borderColor:AUD_COLORS[i],backgroundColor:AUD_COLORS[i]+'22',tension:.4,fill:false,pointRadius:3,pointBackgroundColor:AUD_COLORS[i]
+    }))},
+    options:{...baseOpts}
+  });
+
+  // Virtual vs Home Visit stacked
+  dc('tpType');
+  C['tpType']=new Chart(document.getElementById('tpTypeChart'),{
+    type:'bar',
+    data:{
+      labels:AUDITORS.map(a=>a.split(' ')[0]),
+      datasets:[
+        {label:'🖥️ Virtual',data:AUDITORS.map(a=>getVal(TP_VIRTUAL,a)),backgroundColor:AUDITORS.map((_,i)=>AUD_COLORS[i]+'cc'),borderRadius:4},
+        {label:'🏠 Home Visit',data:AUDITORS.map(a=>getVal(TP_HOMEVISIT,a)),backgroundColor:AUDITORS.map((_,i)=>AUD_COLORS[i]+'55'),borderRadius:4}
+      ]
+    },
+    options:{...baseOpts,scales:{x:{stacked:true,ticks:{color:'#64748b'},grid:{display:false}},y:{stacked:true,ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true}}}
+  });
+
+  renderTPLog();
+}
+
+function renderTPLog(){
+  const aud=document.getElementById('tpAuditorFilter').value;
+  const type=document.getElementById('tpTypeFilter').value;
+  const q=document.getElementById('tpSearch').value.toLowerCase();
+  let list=STUDIOS.filter(s=>{
+    if(aud&&s.auditor!==aud) return false;
+    if(type&&s.auditType!==type) return false;
+    if(q&&!s.name.toLowerCase().includes(q)&&!(s.city||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const fs=v=>v==='Perfect Studio'?`<span class="pill pill-green">✅ Perfect</span>`:v==='Not Perfect'?`<span class="pill pill-red">❌ Not Perfect</span>`:`<span class="pill pill-muted">—</span>`;
+  document.getElementById('tpLogBody').innerHTML=list.length?list.map((s,i)=>`<tr>
+    <td style="color:var(--muted);font-size:10px">${i+1}</td>
+    <td style="font-weight:700">${s.name}</td>
+    <td style="font-size:10px;color:${(LEADERS_CFG[s.leader]||{color:'#94a3b8'}).color}">${s.leader?s.leader.split(' ')[0]:'—'}</td>
+    <td><span class="pill pill-purple">${s.category||'—'}</span></td>
+    <td style="color:var(--muted2)">${s.city||'—'}</td>
+    <td style="color:var(--cyan);font-weight:700">${s.auditor||'—'}</td>
+    <td><span class="pill ${s.auditType==='Home Visit'?'pill-orange':'pill-blue'}">${s.auditType==='Home Visit'?'🏠 Home Visit':'🖥️ Virtual'}</span></td>
+    <td>${fs(s.finalStatus)}</td>
+    <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${s.date||'—'}</td>
+  </tr>`).join(''):`<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:20px">No records found.</td></tr>`;
+}
+
+// ═══ AUDITOR REPORT ═══
+const AUDITORS=['Vinay Pal','Ajit Bala','Vishnu Pandey','Kapil Sharma','Abhimanyu Singh','Sanjay Yadav'];
+const AUD_COLORS=['#7b93ff','#10b981','#ef4444','#8b5cf6','#f59e0b','#06b6d4'];
+
+// Sample weekly/monthly data per auditor per week
+const AUD_WEEKLY={
+  'Vinay Pal':     {w14:8,w15:9,w16:10,w17:7,w18:11},
+  'Ajit Bala':     {w14:6,w15:7,w16:8,w17:9,w18:8},
+  'Vishnu Pandey': {w14:9,w15:8,w16:9,w17:10,w18:9},
+  'Kapil Sharma':  {w14:5,w15:6,w16:7,w17:6,w18:8},
+  'Abhimanyu Singh':{w14:7,w15:8,w16:6,w17:8,w18:7},
+  'Sanjay Yadav':  {w14:4,w15:5,w16:6,w17:5,w18:4},
+};
+const AUD_PERFECT={
+  'Vinay Pal':     {w14:6,w15:7,w16:8,w17:5,w18:9},
+  'Ajit Bala':     {w14:4,w15:5,w16:6,w17:7,w18:6},
+  'Vishnu Pandey': {w14:7,w15:6,w16:7,w17:8,w18:7},
+  'Kapil Sharma':  {w14:3,w15:4,w16:5,w17:4,w18:6},
+  'Abhimanyu Singh':{w14:5,w15:6,w16:4,w17:6,w18:5},
+  'Sanjay Yadav':  {w14:2,w15:3,w16:4,w17:3,w18:3},
+};
+const AUD_IRF={
+  'Vinay Pal':     {w14:2,w15:2,w16:3,w17:2,w18:3},
+  'Ajit Bala':     {w14:1,w15:2,w16:2,w17:2,w18:2},
+  'Vishnu Pandey': {w14:2,w15:2,w16:2,w17:2,w18:2},
+  'Kapil Sharma':  {w14:1,w15:1,w16:2,w17:1,w18:2},
+  'Abhimanyu Singh':{w14:2,w15:2,w16:1,w17:2,w18:2},
+  'Sanjay Yadav':  {w14:1,w15:1,w16:1,w17:1,w18:1},
+};
+const FAIL_PARAMS=['frame','reflection','light','audio','avSync','board'];
+
+function renderAuditorReport(){
+  const period=document.getElementById('audPeriodSel').value;
+  const week=document.getElementById('audWeekSel').value;
+  const isMonthly=period==='monthly';
+  document.getElementById('audTableTitle').textContent=isMonthly?'📋 Monthly Audit Summary — All Auditors':'📋 Weekly Audit Summary — All Auditors';
+  document.getElementById('audWeekSel').style.display=isMonthly?'none':'inline-block';
+
+  // KPI cards
+  document.getElementById('audKpiRow').innerHTML=AUDITORS.map((a,i)=>{
+    const total=isMonthly?Object.values(AUD_WEEKLY[a]).reduce((s,v)=>s+v,0):AUD_WEEKLY[a][week]||0;
+    const perfect=isMonthly?Object.values(AUD_PERFECT[a]).reduce((s,v)=>s+v,0):AUD_PERFECT[a][week]||0;
+    const pct=total?Math.round(perfect/total*100):0;
+    return`<div class="kpi" style="border-color:${AUD_COLORS[i]}33;">
+      <div class="kpi-glow" style="background:${AUD_COLORS[i]}"></div>
+      <div class="kpi-label" style="color:${AUD_COLORS[i]}">${a.split(' ')[0]}</div>
+      <div class="kpi-val" style="color:${AUD_COLORS[i]};font-size:22px">${total}</div>
+      <div class="kpi-sub">✅ ${perfect} perfect (${pct}%)</div>
+      <div class="kpi-bar"><div class="kpi-fill" style="width:${pct}%;background:${AUD_COLORS[i]}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Summary table
+  document.getElementById('audTableBody').innerHTML=AUDITORS.map((a,i)=>{
+    const total=isMonthly?Object.values(AUD_WEEKLY[a]).reduce((s,v)=>s+v,0):AUD_WEEKLY[a][week]||0;
+    const perfect=isMonthly?Object.values(AUD_PERFECT[a]).reduce((s,v)=>s+v,0):AUD_PERFECT[a][week]||0;
+    const notPerf=total-perfect;
+    const irf=isMonthly?Object.values(AUD_IRF[a]).reduce((s,v)=>s+v,0):AUD_IRF[a][week]||0;
+    const days=isMonthly?25:6;
+    const avg=(total/days).toFixed(1);
+    // Count fails from STUDIOS for this auditor
+    const mystudios=STUDIOS.filter(s=>s.auditor===a);
+    const cf=v=>v&&v.startsWith('Fail')?1:0;
+    const camF=mystudios.reduce((s,x)=>s+cf(x.frame),0);
+    const refF=mystudios.reduce((s,x)=>s+cf(x.reflection),0);
+    const litF=mystudios.reduce((s,x)=>s+cf(x.light),0);
+    const audF=mystudios.reduce((s,x)=>s+cf(x.audio),0);
+    const avF=mystudios.reduce((s,x)=>s+cf(x.avSync),0);
+    const brdF=mystudios.reduce((s,x)=>s+cf(x.board),0);
+    const td=(v,c)=>`<td style="text-align:center;font-family:var(--mono);color:${c||'var(--text)'}">${v}</td>`;
+    return`<tr>
+      <td style="color:var(--muted);font-size:10px">${i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:${AUD_COLORS[i]};flex-shrink:0"></div><span style="font-weight:700;color:#fff">${a}</span></div></td>
+      ${td(total,'var(--cyan)')}
+      ${td(perfect,'var(--green)')}
+      ${td(notPerf,'var(--red)')}
+      ${td(irf,'var(--gold)')}
+      ${td(avg,'var(--muted2)')}
+      ${td(camF||'—',camF?'var(--red)':'var(--muted)')}
+      ${td(refF||'—',refF?'var(--red)':'var(--muted)')}
+      ${td(litF||'—',litF?'var(--red)':'var(--muted)')}
+      ${td(audF||'—',audF?'var(--red)':'var(--muted)')}
+      ${td(avF||'—',avF?'var(--red)':'var(--muted)')}
+      ${td(brdF||'—',brdF?'var(--red)':'var(--muted)')}
+    </tr>`;
+  }).join('');
+}
+
+function renderAuditorDetail(){
+  const sel=document.getElementById('audDetailSel').value;
+  const list=sel?STUDIOS.filter(s=>s.auditor===sel):STUDIOS;
+  const pv=(v)=>{
+    if(!v)return'<span style="color:var(--muted)">—</span>';
+    const c=v==='Perfect'||v==='No'?'var(--green)':v.startsWith('Fail')?'var(--red)':'var(--gold)';
+    return`<span style="color:${c};font-size:10px">${v}</span>`;
+  };
+  const fs=(v)=>{
+    if(!v)return'<span style="color:var(--muted)">—</span>';
+    const c=v==='Perfect Studio'?'var(--green)':'var(--red)';
+    return`<span style="color:${c};font-weight:700;font-size:10px">${v}</span>`;
+  };
+  document.getElementById('audDetailBody').innerHTML=list.length?list.map((s,i)=>`<tr>
+    <td style="color:var(--muted);font-size:10px">${i+1}</td>
+    <td style="font-weight:700;white-space:nowrap">${s.name}</td>
+    <td><span class="pill pill-purple">${s.category}</span></td>
+    <td style="color:var(--muted2)">${s.city}</td>
+    <td>${pv(s.frame)}</td>
+    <td>${pv(s.reflection)}</td>
+    <td>${pv(s.light)}</td>
+    <td>${pv(s.audio)}</td>
+    <td>${pv(s.avSync)}</td>
+    <td>${pv(s.board)}</td>
+    <td>${pv(s.irf)}</td>
+    <td>${fs(s.finalStatus)}</td>
+    <td style="font-family:var(--mono);font-size:9px;color:var(--muted)">${s.date}</td>
+  </tr>`).join(''):`<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:24px">No audits found.</td></tr>`;
+}
+
+window.onload=function(){
+  const now=new Date();
+  document.getElementById('liveDate').textContent=now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  setInterval(()=>{const n=new Date();document.getElementById('liveDate').textContent=n.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' · '+n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});},30000);
+  const afDate=document.getElementById('af-date');if(afDate)afDate.value=new Date().toISOString().split('T')[0];
+  loadFromSheet();
+};
+</script>
+</body>
+</html>
