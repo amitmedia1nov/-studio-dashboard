@@ -340,8 +340,8 @@ select,input[type=text],input[type=date]{padding:4px 8px;border-radius:6px;borde
     <div class="kpi c-cyan"><div class="kpi-glow"></div><div class="kpi-label">Total Studios</div><div class="kpi-val" id="kpi-total-studios">371</div><div class="kpi-sub" id="kpi-total-sub">↑ +8 vs last week</div><div class="kpi-bar"><div class="kpi-fill" id="kf1" style="width:0%"></div></div></div>
     <div class="kpi c-green"><div class="kpi-glow"></div><div class="kpi-label">Quality Improved</div><div class="kpi-val" id="kpi-quality">305</div><div class="kpi-sub" id="kpi-quality-sub">84.5% of total</div><div class="kpi-bar"><div class="kpi-fill" id="kf2" style="width:0%"></div></div></div>
     <div class="kpi c-gold"><div class="kpi-glow"></div><div class="kpi-label">WIP (In Progress)</div><div class="kpi-val" id="kpi-wip">56</div><div class="kpi-sub" id="kpi-wip-sub">15.5% of total</div><div class="kpi-bar"><div class="kpi-fill" id="kf3" style="width:0%"></div></div></div>
-    <div class="kpi c-blue"><div class="kpi-glow"></div><div class="kpi-label">Audits This Week</div><div class="kpi-val">47</div><div class="kpi-sub">↑ +12 vs last week</div><div class="kpi-bar"><div class="kpi-fill" id="kf4" style="width:0%"></div></div></div>
-    <div class="kpi c-purple"><div class="kpi-glow"></div><div class="kpi-label">New Studios (Week)</div><div class="kpi-val">8</div><div class="kpi-sub">↑ +3 this month</div><div class="kpi-bar"><div class="kpi-fill" id="kf5" style="width:0%;background:var(--purple)"></div></div></div>
+    <div class="kpi c-blue"><div class="kpi-glow"></div><div class="kpi-label">Audits This Week</div><div class="kpi-val" id="kpi-audits-week">0</div><div class="kpi-sub" id="kpi-audits-week-sub">Loading...</div><div class="kpi-bar"><div class="kpi-fill" id="kf4" style="width:0%"></div></div></div>
+    <div class="kpi c-purple"><div class="kpi-glow"></div><div class="kpi-label">New Studios (Week)</div><div class="kpi-val" id="kpi-new-studios">0</div><div class="kpi-sub" id="kpi-new-studios-sub">Loading...</div><div class="kpi-bar"><div class="kpi-fill" id="kf5" style="width:0%;background:var(--purple)"></div></div></div>
     <div class="kpi c-red"><div class="kpi-glow"></div><div class="kpi-label">Inactive / Flagged</div><div class="kpi-val">10</div><div class="kpi-sub">This Week: <b style="color:var(--red)">4</b> &nbsp;·&nbsp; Month: <b style="color:var(--red)">10</b></div><div class="kpi-bar"><div class="kpi-fill" id="kf6" style="width:0%;background:var(--red)"></div></div></div>
   </div>
 
@@ -574,7 +574,7 @@ select,input[type=text],input[type=date]{padding:4px 8px;border-radius:6px;borde
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Faculty</th><th>Category</th><th>City</th><th>Ownership</th><th>Status</th><th>Reflection</th><th>Audio</th><th>Light</th><th>Auditor</th><th>Date</th></tr></thead>
+        <thead><tr><th>#</th><th>Faculty Name</th><th>📧 Email</th><th>City</th><th>Category</th><th>Status</th><th>Video Link</th><th>Auditor</th><th>Date</th></tr></thead>
         <tbody id="ldStudioBody"></tbody>
       </table>
     </div>
@@ -883,14 +883,35 @@ select,input[type=text],input[type=date]{padding:4px 8px;border-radius:6px;borde
           </select>
         </div>
         <div class="form-group"><label>Category</label><select id="a2-af-category"><option value="">Select</option></select></div>
-        <div class="form-group"><label>City *</label><input type="text" id="a2-af-city" placeholder="Jaise: Delhi, Patna..."/></div>
+        <div class="form-group"><label>City *</label>
+          <select id="a2-af-city">
+            <option value="">Select City</option>
+            <option>Agra</option><option>Ahmedabad</option><option>Ajmer</option><option>Aligarh</option>
+            <option>Allahabad</option><option>Amritsar</option><option>Aurangabad</option><option>Bangalore</option>
+            <option>Bareilly</option><option>Bhopal</option><option>Bhubaneswar</option><option>Chandigarh</option>
+            <option>Chennai</option><option>Coimbatore</option><option>Dehradun</option><option>Delhi</option>
+            <option>Dhanbad</option><option>Faridabad</option><option>Ghaziabad</option><option>Gorakhpur</option>
+            <option>Gurgaon</option><option>Guwahati</option><option>Gwalior</option><option>Hyderabad</option>
+            <option>Indore</option><option>Jabalpur</option><option>Jaipur</option><option>Jalandhar</option>
+            <option>Jammu</option><option>Jamshedpur</option><option>Jodhpur</option><option>Kanpur</option>
+            <option>Kochi</option><option>Kolkata</option><option>Kota</option><option>Kozhikode</option>
+            <option>Lucknow</option><option>Ludhiana</option><option>Madurai</option><option>Mangalore</option>
+            <option>Meerut</option><option>Mumbai</option><option>Mysore</option><option>Nagpur</option>
+            <option>Nashik</option><option>Noida</option><option>Patna</option><option>Pune</option>
+            <option>Raipur</option><option>Rajkot</option><option>Ranchi</option><option>Surat</option>
+            <option>Thiruvananthapuram</option><option>Udaipur</option><option>Vadodara</option>
+            <option>Varanasi</option><option>Vijayawada</option><option>Visakhapatnam</option>
+            <option>Other</option>
+          </select>
+        </div>
         <div class="form-group"><label>Ownership</label>
           <select id="a2-af-ownership">
             <option value="educator">Educator Owned</option>
             <option value="pw">PW Owned</option>
           </select>
         </div>
-        <div class="form-group"><label>Video Link *</label><input type="text" id="a2-af-video" placeholder="Drive/YouTube link"/></div>
+        <div class="form-group"><label>Pre-Video Link *</label><input type="text" id="a2-af-video" placeholder="e.g. new studio / https://drive.google.com/..."/></div>
+        <div class="form-group"><label>Post-Video Link</label><input type="text" id="a2-af-post-video" placeholder="e.g. https://drive.google.com/..."/></div>
         <div class="form-group"><label>Faculty Email</label><input type="text" id="a2-af-mail" placeholder="faculty@email.com"/></div>
         <div class="form-group"><label>Contact</label><input type="text" id="a2-af-contact" placeholder="Mobile number"/></div>
       </div>
@@ -900,7 +921,17 @@ select,input[type=text],input[type=date]{padding:4px 8px;border-radius:6px;borde
     <div class="card">
       <div class="card-hdr"><div><div class="card-title">📋 Audit Details</div></div></div>
       <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
-        <div class="form-group"><label>Auditor Name *</label><input type="text" id="a2-af-auditor" placeholder="Aapka naam"/></div>
+        <div class="form-group"><label>Auditor Name *</label>
+          <select id="a2-af-auditor">
+            <option value="">Select Auditor</option>
+            <option value="Abhimanyu">Abhimanyu</option>
+            <option value="Ajit Bala">Ajit Bala</option>
+            <option value="Kapil">Kapil</option>
+            <option value="Sanjay">Sanjay</option>
+            <option value="Vinay Pal">Vinay Pal</option>
+            <option value="Vishnu">Vishnu</option>
+          </select>
+        </div>
         <div class="form-group"><label>Audit Type *</label>
           <select id="a2-af-auditType">
             <option value="">Select</option>
@@ -926,50 +957,73 @@ select,input[type=text],input[type=date]{padding:4px 8px;border-radius:6px;borde
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:11px;color:var(--muted2);min-width:90px;">📷 Camera Frame</span>
               <select id="a2-afq-camera-frame" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
-                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+                <option value="">Select</option>
+                <option value="Good">✅ Good</option>
+                <option value="Bad">❌ Bad</option>
               </select>
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:11px;color:var(--muted2);min-width:90px;">🪞 Reflection</span>
               <select id="a2-afq-reflection" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
-                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+                <option value="">Select</option>
+                <option value="Perfect">✅ Perfect</option>
+                <option value="Little">⚠️ Little</option>
+                <option value="Major">❌ Major</option>
               </select>
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:11px;color:var(--muted2);min-width:90px;">💡 Lighting</span>
               <select id="a2-afq-lighting" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
-                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+                <option value="">Select</option>
+                <option value="Perfect">✅ Perfect</option>
+                <option value="Minor Issue">⚠️ Minor Issue</option>
+                <option value="Fail">❌ Fail</option>
               </select>
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:11px;color:var(--muted2);min-width:90px;">🎙️ Audio</span>
               <select id="a2-afq-audio" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
-                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+                <option value="">Select</option>
+                <option value="Good">✅ Good</option>
+                <option value="Little Good">⚠️ Little Good</option>
+                <option value="Bad">❌ Bad</option>
               </select>
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span style="font-size:11px;color:var(--muted2);min-width:90px;">🔊 AV Sync</span>
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">📹 Video Quality</span>
               <select id="a2-afq-av-sync" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
-                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+                <option value="">Select</option>
+                <option value="Good">✅ Good</option>
+                <option value="Bad">❌ Bad</option>
               </select>
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span style="font-size:11px;color:var(--muted2);min-width:90px;">📋 Board</span>
+              <span style="font-size:11px;color:var(--muted2);min-width:90px;">📋 Board Age</span>
               <select id="a2-afq-board" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
-                <option value="">Select</option><option value="Perfect">✅ Perfect</option><option value="Minor Issue">⚠️ Minor Issue</option><option value="Fail">❌ Fail</option>
+                <option value="">Select</option>
+                <option value="New">🆕 New</option>
+                <option value="1 Year Old">📅 1 Year Old</option>
+                <option value="2 Year Old">📅 2 Year Old</option>
+                <option value="3 Year Old">📅 3 Year Old</option>
+                <option value="4+ Year Old">📅 4+ Year Old</option>
               </select>
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <span style="font-size:11px;color:var(--muted2);min-width:90px;">📌 IRF</span>
-              <select id="a2-afq-irf" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);flex:1;margin-left:8px;">
-                <option value="">Select</option><option value="No">✅ No</option><option value="Yes">⚠️ Yes</option>
-              </select>
+              <div style="flex:1;margin-left:8px;display:flex;flex-direction:column;gap:4px;">
+                <select id="a2-afq-irf" onchange="toggleIRFInput(this.value)" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);width:100%;">
+                  <option value="">Select</option>
+                  <option value="No IRF">✅ No IRF</option>
+                  <option value="IRF Raised">⚠️ IRF Raised</option>
+                </select>
+                <input type="text" id="a2-afq-irf-number" placeholder="IRF ID e.g. IRF-N38U0" style="display:none;font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid rgba(245,158,11,0.4);background:rgba(245,158,11,0.08);color:var(--gold);width:100%;outline:none;"/>
+              </div>
             </div>
 
           </div>
@@ -1080,7 +1134,7 @@ let PENDING_APPROVALS=[
 ];
 
 // ── GOOGLE SHEET CONFIG ──────────────────────────────────────────
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbybMzHaeunWPKM9yR7Mps0Yz4xy6Q1H7kePwAhJzNHsTOcj-96bT7MjTBMwLs_G_hvNNw/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwfFky6iyiH10I_dcHM1i75KC9tJeLLzVn0uuIB2h9SadjevTleLxyYJp1OFWaEnyvOww/exec";
 
 function applySheetData(data){
   const nameMap = {
@@ -1137,6 +1191,26 @@ function applySheetData(data){
   });
 
   if(data.weekQuality && data.weekQuality.length) window.SHEET_WEEK_QUALITY=data.weekQuality;
+
+  // ── Audits This Week + New Studios KPI ──
+  // ── Leader Faculty Data from tabs ──
+  if(data.leaderFacultyData){
+    window.LEADER_FACULTY_DATA = data.leaderFacultyData;
+    // leaderFacultyData se sirf faculties list lo — numbers Summary sheet se hi rahenge
+  }
+
+  if(data.auditsThisWeek !== undefined){
+    const el=document.getElementById('kpi-audits-week');
+    if(el) el.textContent=data.auditsThisWeek;
+    const sub=document.getElementById('kpi-audits-week-sub');
+    if(sub) sub.textContent='W'+data.currentWeek+' — Live count';
+  }
+  if(data.newStudiosThisWeek !== undefined){
+    const el=document.getElementById('kpi-new-studios');
+    if(el) el.textContent=data.newStudiosThisWeek;
+    const sub=document.getElementById('kpi-new-studios-sub');
+    if(sub) sub.textContent='W'+data.currentWeek+' — Pre-link: new studio';
+  }
 
   showToast('✅ Sheet ka live data load ho gaya! 📊','green');
   if(typeof buildLeaderSummaryTable==='function') buildLeaderSummaryTable();
@@ -1630,19 +1704,44 @@ function buildStatusHist(){
 function renderLeaders(){
   document.getElementById('leaderCards').innerHTML=LEADER_NAMES.map(n=>{
     const cfg=LEADERS_CFG[n]||{color:'#fff',cats:[]};
-    const d=LEADER_WEEK[n]||{total:0,totP:0,totW:0};
-    const pct=d.total?Math.round(d.totP/d.total*100):0;
+    const d=LEADER_WEEK[n]||{total:0,pwP:0,edP:0,totP:0,pwW:0,edW:0,totW:0};
+    const live = window.LEADER_FACULTY_DATA && window.LEADER_FACULTY_DATA[n];
+    const total   = d.total || (live ? live.total   : 0);
+    const pwPerf  = d.pwP   || 0;
+    const edPerf  = d.edP   || 0;
+    const totPerf = d.totP  || (live ? live.perfect : 0);
+    const pwWip   = d.pwW   || 0;
+    const edWip   = d.edW   || 0;
+    const totWip  = d.totW  || (live ? live.wip     : 0);
+    const pct=total?Math.round(totPerf/total*100):0;
+    const hasLive = !!live;
     return `<div class="lc" onclick="showLdrDetail('${n.replace(/'/g,"\\'")}')">
       <div class="lc-top">
         <div class="lc-av" style="background:${cfg.color}22;color:${cfg.color}">${n.charAt(0)}</div>
-        <div><div class="lc-name">${n.length>22?n.slice(0,20)+'…':n}</div><div class="lc-cat">${cfg.cats.slice(0,2).join(' · ')}</div></div>
+        <div>
+          <div class="lc-name">${n.length>22?n.slice(0,20)+'…':n}</div>
+          <div class="lc-cat">${hasLive?'<span style="color:var(--green);font-size:8px">● Live</span> ':''} ${cfg.cats.slice(0,2).join(' · ')}</div>
+        </div>
       </div>
-      <div class="lc-stats">
-        <div class="lc-stat"><div class="lc-sv" style="color:var(--cyan)">${d.total}</div><div class="lc-sl">Studios</div></div>
-        <div class="lc-stat"><div class="lc-sv" style="color:var(--green)">${d.totP}</div><div class="lc-sl">Improved</div></div>
-        <div class="lc-stat"><div class="lc-sv" style="color:var(--gold)">${d.totW}</div><div class="lc-sl">WIP</div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin:5px 0;">
+        <div class="lc-stat"><div class="lc-sv" style="color:var(--cyan);font-size:13px">${total}</div><div class="lc-sl">Total</div></div>
+        <div class="lc-stat"><div class="lc-sv" style="color:var(--green);font-size:13px">${totPerf}</div><div class="lc-sl">Perfect</div></div>
+        <div class="lc-stat"><div class="lc-sv" style="color:var(--gold);font-size:13px">${totWip}</div><div class="lc-sl">WIP</div></div>
+        <div class="lc-stat"><div class="lc-sv" style="color:var(--muted2);font-size:12px">${pct}%</div><div class="lc-sl">Score</div></div>
       </div>
-      <div class="lc-bar"><div class="lc-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;padding-top:4px;border-top:1px solid var(--border);">
+        <div style="text-align:center;padding:3px;background:var(--bg3);border-radius:6px;">
+          <div style="font-size:8px;color:var(--muted);font-weight:600">PW Owned</div>
+          <div style="font-size:11px;color:var(--green);font-weight:700">${pwPerf} ✅</div>
+          <div style="font-size:9px;color:var(--red)">${pwWip} WIP</div>
+        </div>
+        <div style="text-align:center;padding:3px;background:var(--bg3);border-radius:6px;">
+          <div style="font-size:8px;color:var(--muted);font-weight:600">Educator</div>
+          <div style="font-size:11px;color:var(--green);font-weight:700">${edPerf} ✅</div>
+          <div style="font-size:9px;color:var(--red)">${edWip} WIP</div>
+        </div>
+      </div>
+      <div class="lc-bar" style="margin-top:5px"><div class="lc-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
     </div>`;
   }).join('');
 }
@@ -1650,19 +1749,45 @@ function renderLeaders(){
 function showLdrDetail(name){
   document.getElementById('leaderDetail').style.display='block';
   document.getElementById('ldTitle').textContent=name+' — Studio Detail';
-  document.getElementById('ldSub').textContent='All audited studios under this leader';
-  const studios=STUDIOS.filter(s=>s.leader===name);
-  const q=(v)=>v==='Pass'?'<span style="color:var(--green)">✅</span>':v==='Fail'?'<span style="color:var(--red)">❌</span>':'<span style="color:var(--gold)">🔄</span>';
-  document.getElementById('ldStudioBody').innerHTML=studios.length?studios.map(s=>`<tr>
-    <td style="font-weight:600">${s.name}</td>
-    <td><span class="pill pill-purple">${s.category}</span></td>
-    <td style="color:var(--muted2)">${s.city}</td>
-    <td>${s.ownership==='pw'?'🏢 PW':'🧑‍🏫 Educator'}</td>
-    <td><span class="pill ${s.status==='perfect'?'pill-green':s.status==='wip'?'pill-gold':'pill-muted'}">${s.status==='perfect'?'✅ Improved':s.status==='wip'?'🔄 WIP':'⏳ Pending'}</span></td>
-    <td>${q(s.reflection)}</td><td>${q(s.audio)}</td><td>${q(s.light)}</td>
-    <td style="color:var(--cyan)">${s.auditor}</td>
-    <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${s.date}</td>
-  </tr>`).join(''):`<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No records yet.</td></tr>`;
+  document.getElementById('ldSub').textContent='Google Sheet se live data';
+
+  // Live sheet data use karo agar available hai
+  const liveData = window.LEADER_FACULTY_DATA && window.LEADER_FACULTY_DATA[name];
+
+  if(liveData && liveData.faculties && liveData.faculties.length){
+    const faculties = liveData.faculties;
+    document.getElementById('ldStudioBody').innerHTML = faculties.map((f,i)=>{
+      const isPerfect = (f.status||'').toLowerCase()==='perfect';
+      const statusPill = isPerfect
+        ? '<span class="pill pill-green">✅ Perfect</span>'
+        : '<span class="pill pill-red">❌ Not Perfect</span>';
+      const rmk = f.remarks||'—';
+      const remarkColor = rmk==='Perfect'?'var(--green)':rmk.includes('Major')?'var(--red)':rmk.includes('Little')?'var(--gold)':'var(--muted2)';
+      return `<tr>
+        <td style="color:var(--muted);font-size:10px">${i+1}</td>
+        <td style="font-weight:600">${f.name}</td>
+        <td style="font-size:10px;color:var(--muted2)">${f.email||'—'}</td>
+        <td style="color:var(--cyan);font-size:10px">${f.city||'—'}</td>
+        <td><span class="pill pill-purple">${f.category}</span></td>
+        <td>${statusPill}</td>
+        <td>${f.link?`<a href="${f.link}" target="_blank" style="color:var(--accent2);font-size:10px">▶ View</a>`:'<span style="color:var(--muted)">—</span>'}</td>
+        <td style="font-size:10px;color:var(--muted2)">${f.auditor||'—'}</td>
+        <td style="font-size:10px;color:var(--muted2)">${f.date||'—'}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    // Fallback to local data
+    const studios = STUDIOS.filter(s=>s.leader===name);
+    document.getElementById('ldStudioBody').innerHTML = studios.length ? studios.map(s=>`<tr>
+      <td style="font-weight:600">${s.name}</td>
+      <td><span class="pill pill-purple">${s.category}</span></td>
+      <td style="color:var(--muted2)">${s.city}</td>
+      <td>${s.ownership==='pw'?'🏢 PW':'🧑‍🏫 Educator'}</td>
+      <td><span class="pill ${s.status==='perfect'?'pill-green':'pill-gold'}">${s.status==='perfect'?'✅ Perfect':'🔄 WIP'}</span></td>
+      <td colspan="4" style="color:var(--muted2)">—</td>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${s.date}</td>
+    </tr>`).join('') : `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No records yet.</td></tr>`;
+  }
 }
 
 // ═══ STUDIOS ═══
@@ -2252,6 +2377,18 @@ function nav(id,tabEl,sbEl){
 }
 
 // ═══ AUDIT PAGE ═══
+function toggleIRFInput(val){
+  const el = document.getElementById('a2-afq-irf-number');
+  if(!el) return;
+  if(val === 'IRF Raised'){
+    el.style.display = 'block';
+    el.focus();
+  } else {
+    el.style.display = 'none';
+    el.value = '';
+  }
+}
+
 function afUpdateCat(){
   const cats=LEADER_CATS[document.getElementById('a2-af-leader').value]||[];
   document.getElementById('a2-af-category').innerHTML='<option value="">Select</option>'+cats.map(c=>`<option>${c}</option>`).join('');
@@ -2259,14 +2396,16 @@ function afUpdateCat(){
 
 function afReset(){
   ['a2-af-faculty','a2-af-leader','a2-af-category','a2-af-city','a2-af-ownership',
-   'a2-af-video','a2-af-mail','a2-af-contact','a2-af-auditor','a2-af-auditType',
+   'a2-af-video','a2-af-post-video','a2-af-mail','a2-af-contact','a2-af-auditor','a2-af-auditType',
    'a2-af-date','a2-af-remark','a2-af-status'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   ['a2-afq-camera-frame','a2-afq-reflection','a2-afq-lighting','a2-afq-audio',
-   'a2-afq-av-sync','a2-afq-board','a2-afq-irf'].forEach(id=>{
+   'a2-afq-av-sync','a2-afq-board','a2-afq-irf','a2-afq-irf-number'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
+  const irfNum = document.getElementById('a2-afq-irf-number');
+  if(irfNum) irfNum.style.display='none';
 }
 
 function afSubmit(){
@@ -2343,9 +2482,10 @@ function afSubmit(){
     audio:       entry.audio||'—',
     avSync:      entry.avSync||'—',
     board:       entry.board||'—',
-    irf:         entry.irf||'—',
+    irf:         (document.getElementById('a2-afq-irf')?.value==='IRF Raised' ? 'IRF Raised: '+(document.getElementById('a2-afq-irf-number')?.value||'') : document.getElementById('a2-afq-irf')?.value||'—'),
     finalStatus: entry.finalStatus,
-    videoLink:   entry.videoLink||'',
+    preVideo:    document.getElementById('a2-af-video')?.value||'',
+    postVideo:   document.getElementById('a2-af-post-video')?.value||'',
     remark:      entry.remark||'',
     action:      'submitAudit'
   });
