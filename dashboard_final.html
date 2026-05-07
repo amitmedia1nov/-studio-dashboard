@@ -1749,10 +1749,13 @@ function renderLeaders(){
 function showLdrDetail(name){
   document.getElementById('leaderDetail').style.display='block';
   document.getElementById('ldTitle').textContent=name+' — Studio Detail';
-  document.getElementById('ldSub').textContent='Google Sheet se live data';
 
   // Live sheet data use karo agar available hai
   const liveData = window.LEADER_FACULTY_DATA && window.LEADER_FACULTY_DATA[name];
+  const availableKeys = window.LEADER_FACULTY_DATA ? Object.keys(window.LEADER_FACULTY_DATA) : [];
+  document.getElementById('ldSub').textContent = liveData
+    ? 'Google Sheet se live data ('+liveData.faculties.length+' faculty)'
+    : 'Sample data — Sheet keys: '+availableKeys.join(', ');
 
   if(liveData && liveData.faculties && liveData.faculties.length){
     const faculties = liveData.faculties;
